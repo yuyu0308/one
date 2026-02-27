@@ -8,7 +8,7 @@ import uuid
 import secrets
 
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)  # 用于session加密
+app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(16))  # 用于session加密
 CORS(app)
 
 # 配置
@@ -395,4 +395,6 @@ def update_layout():
 init_data()
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Railway使用环境变量PORT
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
