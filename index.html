@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人主页</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style id="dynamicStyles"></style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="nav-title" id="navTitle">个人主页</h1>
+        </div>
+    </nav>
+
+    <div id="modules-container">
+        <!-- 模块将根据配置动态加载 -->
+        <div id="loading" style="text-align: center; padding: 3rem;">
+            <div style="display: inline-block; width: 40px; height: 40px; border: 3px solid #6366f1; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top: 1rem; color: #6b7280;">加载中...</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p id="footerText">&copy; 个人主页</p>
+        </div>
+    </footer>
+
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

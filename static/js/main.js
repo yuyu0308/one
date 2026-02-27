@@ -1,19 +1,17 @@
 // 页面数据和配置
 let pageData = {};
-let currentLayout = {};
 
 // 初始化页面
 async function initPage() {
     const loading = document.getElementById('loading');
     
     try {
-        // 从全局变量获取数据
-        if (typeof window.pageData !== 'undefined') {
-            pageData = window.pageData;
-        } else {
-            const response = await fetch('/api/data');
-            pageData = await response.json();
+        // 从data.json文件加载数据
+        const response = await fetch('/data.json');
+        if (!response.ok) {
+            throw new Error('无法加载数据');
         }
+        pageData = await response.json();
         
         // 应用主题
         applyTheme();
@@ -34,7 +32,13 @@ async function initPage() {
     } catch (error) {
         console.error('初始化页面失败:', error);
         if (loading) {
-            loading.innerHTML = '<p style="color: red;">加载失败，请刷新页面重试</p>';
+            loading.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <p style="color: red; margin-bottom: 1rem;">加载失败</p>
+                    <p style="color: #6b7280; font-size: 0.9rem;">请刷新页面重试</p>
+                    <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #6366f1; color: white; border: none; border-radius: 5px; cursor: pointer;">刷新页面</button>
+                </div>
+            `;
         }
     }
 }
@@ -43,7 +47,6 @@ async function initPage() {
 function applyTheme() {
     const theme = pageData.theme || {};
     const body = document.body;
-    const dynamicStyles = document.getElementById('dynamicStyles');
     
     // 设置背景
     if (theme.background_type === 'image' && theme.background_image) {
@@ -54,8 +57,8 @@ function applyTheme() {
         body.style.setProperty('--bg-color', theme.background_color || '#667eea');
     } else {
         body.className = 'bg-gradient';
-        body.style.setProperty('--bg-start', theme.background_color || '#667eea');
-        body.style.setProperty('--bg-end', theme.background_color_end || '#764ba2');
+        body.style.setProperty('--bg-start', theme.background_color || '#6366f1');
+        body.style.setProperty('--bg-end', theme.background_color_end || '#ec4899');
     }
     
     // 设置鼠标样式
@@ -72,7 +75,7 @@ async function renderModules() {
     const layout = pageData.layout || {};
     const moduleOrder = layout.module_order || ['hero', 'skills', 'projects', 'files'];
     
-    // 移除加载指示器，保留模块容器
+    // 移除加载指示器
     const loading = document.getElementById('loading');
     if (loading) {
         container.innerHTML = '';
@@ -91,7 +94,7 @@ async function renderModules() {
     
     // 如果没有加载任何模块，显示错误信息
     if (container.children.length === 0) {
-        container.innerHTML = '<p style="text-align: center; padding: 3rem; color: var(--text-secondary);">内容加载失败，请刷新页面重试</p>';
+        container.innerHTML = '<p style="text-align: center; padding: 3rem; color: #6b7280;">内容加载失败，请刷新页面重试</p>';
     }
 }
 
@@ -132,7 +135,7 @@ function createHeroModule() {
                     <img src="${profile.avatar || '/static/uploads/default-avatar.png'}" 
                          alt="${profile.name}" 
                          class="avatar"
-                         onerror="this.src='/static/uploads/default-avatar.png'">
+                         onerror="this.src='https://via.placeholder.com/160'">
                     <h1 class="hero-title">${profile.name || '你的名字'}</h1>
                     <p class="hero-subtitle">${profile.title || '前端开发者 / 全栈工程师'}</p>
                     <p class="hero-bio">${profile.bio || '你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。'}</p>
@@ -181,7 +184,7 @@ function createProjectsModule() {
             <img src="${project.image}" 
                  alt="${project.title}" 
                  class="project-image"
-                 onerror="this.src='/static/uploads/default-project.png'">
+                 onerror="this.src='https://via.placeholder.com/320x220'">
             <div class="project-content">
                 <h3 class="project-title">${project.title}</h3>
                 <p class="project-description">${project.description}</p>
@@ -207,57 +210,45 @@ function createProjectsModule() {
 
 // Files模块
 async function createFilesModule() {
-    try {
-        const response = await fetch('/api/files');
-        const files = await response.json();
-        
-        if (files.length === 0) {
-            return '';
-        }
-        
-        let filesHtml = files.map(file => {
-            const icon = getFileIcon(file.type);
-            const size = formatFileSize(file.size);
-            
-            return `
-                <div class="file-card">
-                    <div class="file-icon">${icon}</div>
-                    <div class="file-name">${file.original_name}</div>
-                    <div class="file-description">${file.description || '暂无描述'}</div>
-                    <div class="file-info">
-                        <span>${size}</span>
-                        <span>${file.downloads} 次下载</span>
-                    </div>
-                    <a href="/files/${file.filename}" 
-                       class="file-download-btn"
-                       onclick="incrementDownload('${file.id}')"
-                       download>
-                        下载文件
-                    </a>
-                </div>
-            `;
-        }).join('');
-        
-        return `
-            <section class="section files-section">
-                <div class="container">
-                    <h2 class="section-title">文件资源</h2>
-                    <div class="files-grid">
-                        ${filesHtml}
-                    </div>
-                </div>
-            </section>
-        `;
-    } catch (error) {
-        console.error('加载文件列表失败:', error);
+    const files = pageData.files || [];
+    
+    if (files.length === 0) {
         return '';
     }
-}
-
-// 增加下载次数
-function incrementDownload(fileId) {
-    fetch(`/api/files/${fileId}/download`, { method: 'POST' })
-        .catch(error => console.error('更新下载次数失败:', error));
+    
+    let filesHtml = files.map(file => {
+        const icon = getFileIcon(file.type);
+        const size = formatFileSize(file.size);
+        
+        return `
+            <div class="file-card">
+                <div class="file-icon">${icon}</div>
+                <div class="file-name">${file.name}</div>
+                <div class="file-description">${file.description || '暂无描述'}</div>
+                <div class="file-info">
+                    <span>${size}</span>
+                    <span>${file.downloads || 0} 次下载</span>
+                </div>
+                <a href="${file.url}" 
+                   class="file-download-btn"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    下载文件
+                </a>
+            </div>
+        `;
+    }).join('');
+    
+    return `
+        <section class="section files-section">
+            <div class="container">
+                <h2 class="section-title">文件资源</h2>
+                <div class="files-grid">
+                    ${filesHtml}
+                </div>
+            </div>
+        </section>
+    `;
 }
 
 // 获取文件图标
@@ -283,6 +274,7 @@ function getFileIcon(type) {
 
 // 格式化文件大小
 function formatFileSize(bytes) {
+    if (!bytes) return '未知大小';
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
     if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
@@ -348,7 +340,7 @@ function handleDrop(e) {
             this.parentNode.insertBefore(draggedModule, this);
         }
         
-        // 更新模块顺序
+        // 更新模块顺序（保存到本地）
         updateModuleOrder();
     }
 }
@@ -359,30 +351,25 @@ function updateModuleOrder() {
     const modules = container.querySelectorAll('.module');
     const newOrder = [...modules].map(m => m.dataset.module);
     
-    // 发送到服务器
-    fetch('/api/layout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            modules: newOrder,
-            module_order: newOrder
-        })
-    }).catch(error => console.error('更新布局失败:', error));
+    // 保存到localStorage
+    localStorage.setItem('moduleOrder', JSON.stringify(newOrder));
+    console.log('模块顺序已更新:', newOrder);
+    alert('模块顺序已更新（仅本地保存）');
 }
 
 // 初始化动画
 function initAnimations() {
     // 技能条动画
-    const skillBars = document.querySelectorAll('.skill-progress');
-    skillBars.forEach(bar => {
-        const width = bar.style.width;
-        bar.style.width = '0';
-        setTimeout(() => {
-            bar.style.width = width;
-        }, 500);
-    });
+    setTimeout(() => {
+        const skillBars = document.querySelectorAll('.skill-progress');
+        skillBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 500);
+        });
+    }, 100);
     
     // 平滑滚动
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

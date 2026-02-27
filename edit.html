@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑网站内容</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .item-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .item-card {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .item-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .json-preview {
+            background: #1f2937;
+            color: #10b981;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>📝 网站内容编辑器</h1>
+            <p>编辑你的网站内容，然后下载并推送更新</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="alert alert-info">
+            <strong>使用说明：</strong>
+            <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                <li>编辑下面的内容</li>
+                <li>点击"预览JSON"查看结果</li>
+                <li>点击"下载data.json"保存文件</li>
+                <li>将下载的文件放到项目根目录</li>
+                <li>推送到GitHub，网站自动更新</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>个人信息</h2>
+            <div class="form-group">
+                <label for="name">姓名</label>
+                <input type="text" id="name" value="你的名字">
+            </div>
+            <div class="form-group">
+                <label for="title">职位/头衔</label>
+                <input type="text" id="title" value="前端开发者 / 全栈工程师">
+            </div>
+            <div class="form-group">
+                <label for="bio">个人简介</label>
+                <textarea id="bio">你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。</textarea>
+            </div>
+            <div class="form-group">
+                <label for="email">邮箱</label>
+                <input type="email" id="email" value="your.email@example.com">
+            </div>
+            <div class="form-group">
+                <label for="github">GitHub链接</label>
+                <input type="text" id="github" value="https://github.com/yourusername">
+            </div>
+            <div class="form-group">
+                <label for="avatar">头像URL</label>
+                <input type="text" id="avatar" value="/static/uploads/default-avatar.png">
+                <small style="color: #6b7280;">可以使用图床链接（如：https://i.imgur.com/xxx.jpg）</small>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>技能列表</h2>
+            <div id="skills-list" class="item-list"></div>
+            <button class="btn btn-primary" onclick="addSkill()">+ 添加技能</button>
+        </div>
+
+        <div class="section">
+            <h2>项目作品</h2>
+            <div id="projects-list" class="item-list"></div>
+            <button class="btn btn-primary" onclick="addProject()">+ 添加项目</button>
+        </div>
+
+        <div class="section">
+            <h2>文件资源</h2>
+            <div id="files-list" class="item-list"></div>
+            <button class="btn btn-primary" onclick="addFile()">+ 添加文件</button>
+        </div>
+
+        <div class="section">
+            <h2>主题设置</h2>
+            <div class="form-group">
+                <label for="background_type">背景类型</label>
+                <select id="background_type" onchange="toggleBackgroundOptions()">
+                    <option value="gradient">渐变色</option>
+                    <option value="solid">纯色</option>
+                    <option value="image">图片</option>
+                </select>
+            </div>
+            <div class="form-group" id="gradient-options">
+                <label for="background_color">渐变起始色</label>
+                <input type="text" id="background_color" value="#667eea" placeholder="#667eea">
+            </div>
+            <div class="form-group" id="gradient-options-end">
+                <label for="background_color_end">渐变结束色</label>
+                <input type="text" id="background_color_end" value="#764ba2" placeholder="#764ba2">
+            </div>
+            <div class="form-group" id="solid-option" style="display: none;">
+                <label for="background_solid">背景颜色</label>
+                <input type="text" id="background_solid" value="#667eea" placeholder="#667eea">
+            </div>
+            <div class="form-group" id="image-option" style="display: none;">
+                <label for="background_image">背景图片URL</label>
+                <input type="text" id="background_image" value="" placeholder="https://i.imgur.com/xxx.jpg">
+            </div>
+            <div class="form-group">
+                <label for="cursor_style">鼠标样式</label>
+                <select id="cursor_style">
+                    <option value="default">默认</option>
+                    <option value="pointer">指针</option>
+                    <option value="custom">自定义</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>JSON预览</h2>
+            <div class="json-preview" id="json-preview"></div>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="previewJSON()">预览JSON</button>
+                <button class="btn btn-primary" onclick="downloadJSON()">下载data.json</button>
+                <button class="btn btn-danger" onclick="resetData()">重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data = {
+            profile: {
+                name: '雨',
+                title: '前端开发者 / 全栈工程师',
+                avatar: '/static/uploads/6bd504ad0567400197ac5fc33587be43.png',
+                bio: '你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。',
+                email: '1684550253@qq.com',
+                github: 'https://github.com/yourusername',
+                location: '中国'
+            },
+            skills: [
+                { name: 'HTML/CSS', level: 90 },
+                { name: 'JavaScript', level: 85 },
+                { name: 'Python', level: 80 },
+                { name: 'React', level: 75 }
+            ],
+            projects: [
+                {
+                    id: '1',
+                    title: '示例项目1',
+                    description: '这是一个示例项目描述',
+                    image: '/static/uploads/default-project.png',
+                    link: '#',
+                    tags: ['Web', '前端']
+                }
+            ],
+            files: [],
+            theme: {
+                background_type: 'image',
+                cursor_style: 'custom',
+                background_image: '/static/uploads/7c4a63df19cd452e87c34400a7a9d482.png',
+                background_color: '#667eea',
+                background_color_end: '#764ba2'
+            },
+            layout: {
+                module_order: ['hero', 'skills', 'projects', 'files']
+            }
+        };
+
+        // 加载现有数据
+        async function loadData() {
+            try {
+                const response = await fetch('/data.json');
+                if (response.ok) {
+                    data = await response.json();
+                    populateForm();
+                }
+            } catch (error) {
+                console.log('使用默认数据');
+            }
+        }
+
+        // 填充表单
+        function populateForm() {
+            // 个人信息
+            document.getElementById('name').value = data.profile.name || '';
+            document.getElementById('title').value = data.profile.title || '';
+            document.getElementById('bio').value = data.profile.bio || '';
+            document.getElementById('email').value = data.profile.email || '';
+            document.getElementById('github').value = data.profile.github || '';
+            document.getElementById('avatar').value = data.profile.avatar || '';
+
+            // 技能
+            renderSkills();
+            
+            // 项目
+            renderProjects();
+            
+            // 文件
+            renderFiles();
+
+            // 主题
+            document.getElementById('background_type').value = data.theme?.background_type || 'gradient';
+            document.getElementById('background_color').value = data.theme?.background_color || '#667eea';
+            document.getElementById('background_color_end').value = data.theme?.background_color_end || '#764ba2';
+            document.getElementById('background_solid').value = data.theme?.background_color || '#667eea';
+            document.getElementById('background_image').value = data.theme?.background_image || '';
+            document.getElementById('cursor_style').value = data.theme?.cursor_style || 'default';
+            
+            toggleBackgroundOptions();
+        }
+
+        // 渲染技能列表
+        function renderSkills() {
+            const container = document.getElementById('skills-list');
+            container.innerHTML = data.skills.map((skill, index) => `
+                <div class="item-card">
+                    <div class="form-group">
+                        <label>技能名称</label>
+                        <input type="text" value="${skill.name}" onchange="updateSkill(${index}, 'name', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>熟练度 (0-100)</label>
+                        <input type="number" min="0" max="100" value="${skill.level}" onchange="updateSkill(${index}, 'level', this.value)">
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-danger" onclick="removeSkill(${index})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染项目列表
+        function renderProjects() {
+            const container = document.getElementById('projects-list');
+            container.innerHTML = data.projects.map((project, index) => `
+                <div class="item-card">
+                    <h3>${project.title}</h3>
+                    <div class="form-group">
+                        <label>项目标题</label>
+                        <input type="text" value="${project.title}" onchange="updateProject(${index}, 'title', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>项目描述</label>
+                        <textarea onchange="updateProject(${index}, 'description', this.value)">${project.description}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>项目图片URL</label>
+                        <input type="text" value="${project.image}" onchange="updateProject(${index}, 'image', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>项目链接</label>
+                        <input type="text" value="${project.link}" onchange="updateProject(${index}, 'link', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>标签（用逗号分隔）</label>
+                        <input type="text" value="${project.tags.join(', ')}" onchange="updateProject(${index}, 'tags', this.value)">
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-danger" onclick="removeProject(${index})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染文件列表
+        function renderFiles() {
+            const container = document.getElementById('files-list');
+            container.innerHTML = data.files.map((file, index) => `
+                <div class="item-card">
+                    <h3>${file.name}</h3>
+                    <div class="form-group">
+                        <label>文件名称</label>
+                        <input type="text" value="${file.name}" onchange="updateFile(${index}, 'name', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>文件描述</label>
+                        <input type="text" value="${file.description}" onchange="updateFile(${index}, 'description', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>文件URL</label>
+                        <input type="text" value="${file.url}" onchange="updateFile(${index}, 'url', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>文件类型</label>
+                        <select onchange="updateFile(${index}, 'type', this.value)">
+                            <option value="pdf" ${file.type === 'pdf' ? 'selected' : ''}>PDF</option>
+                            <option value="doc" ${file.type === 'doc' ? 'selected' : ''}>Word</option>
+                            <option value="zip" ${file.type === 'zip' ? 'selected' : ''}>ZIP</option>
+                            <option value="other" ${file.type === 'other' ? 'selected' : ''}>其他</option>
+                        </select>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-danger" onclick="removeFile(${index})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 更新个人信息
+        function updateProfile() {
+            data.profile.name = document.getElementById('name').value;
+            data.profile.title = document.getElementById('title').value;
+            data.profile.bio = document.getElementById('bio').value;
+            data.profile.email = document.getElementById('email').value;
+            data.profile.github = document.getElementById('github').value;
+            data.profile.avatar = document.getElementById('avatar').value;
+        }
+
+        // 添加技能
+        function addSkill() {
+            data.skills.push({ name: '新技能', level: 50 });
+            renderSkills();
+        }
+
+        // 更新技能
+        function updateSkill(index, field, value) {
+            data.skills[index][field] = value;
+        }
+
+        // 删除技能
+        function removeSkill(index) {
+            data.skills.splice(index, 1);
+            renderSkills();
+        }
+
+        // 添加项目
+        function addProject() {
+            data.projects.push({
+                id: Date.now().toString(),
+                title: '新项目',
+                description: '项目描述',
+                image: 'https://via.placeholder.com/320x220',
+                link: '#',
+                tags: ['新标签']
+            });
+            renderProjects();
+        }
+
+        // 更新项目
+        function updateProject(index, field, value) {
+            if (field === 'tags') {
+                data.projects[index][field] = value.split(',').map(t => t.trim());
+            } else {
+                data.projects[index][field] = value;
+            }
+        }
+
+        // 删除项目
+        function removeProject(index) {
+            data.projects.splice(index, 1);
+            renderProjects();
+        }
+
+        // 添加文件
+        function addFile() {
+            data.files.push({
+                name: '新文件',
+                description: '文件描述',
+                url: '#',
+                type: 'other',
+                size: 0,
+                downloads: 0
+            });
+            renderFiles();
+        }
+
+        // 更新文件
+        function updateFile(index, field, value) {
+            data.files[index][field] = value;
+        }
+
+        // 删除文件
+        function removeFile(index) {
+            data.files.splice(index, 1);
+            renderFiles();
+        }
+
+        // 切换背景选项
+        function toggleBackgroundOptions() {
+            const type = document.getElementById('background_type').value;
+            
+            document.getElementById('gradient-options').style.display = type === 'gradient' ? 'block' : 'none';
+            document.getElementById('gradient-options-end').style.display = type === 'gradient' ? 'block' : 'none';
+            document.getElementById('solid-option').style.display = type === 'solid' ? 'block' : 'none';
+            document.getElementById('image-option').style.display = type === 'image' ? 'block' : 'none';
+        }
+
+        // 更新主题
+        function updateTheme() {
+            data.theme = {
+                background_type: document.getElementById('background_type').value,
+                background_color: document.getElementById('background_color').value,
+                background_color_end: document.getElementById('background_color_end').value,
+                background_image: document.getElementById('background_image').value,
+                cursor_style: document.getElementById('cursor_style').value
+            };
+        }
+
+        // 预览JSON
+        function previewJSON() {
+            updateProfile();
+            updateTheme();
+            document.getElementById('json-preview').textContent = JSON.stringify(data, null, 2);
+        }
+
+        // 下载JSON
+        function downloadJSON() {
+            updateProfile();
+            updateTheme();
+            
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ data.json已下载！\n\n下一步：\n1. 将文件放到项目根目录\n2. 推送到GitHub\n3. 网站自动更新');
+        }
+
+        // 重置数据
+        function resetData() {
+            if (confirm('确定要重置所有数据吗？')) {
+                location.reload();
+            }
+        }
+
+        // 初始化
+        loadData();
+    </script>
+</body>
+</html>
