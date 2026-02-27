@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ data.profile.name }} - 个人主页</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style id="dynamicStyles"></style>
+</head>
+<body style="opacity: 1;">
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="nav-title">{{ data.profile.name }}</h1>
+        </div>
+    </nav>
+
+    <div id="modules-container">
+        <!-- 加载指示器 -->
+        <div id="loading" style="text-align: center; padding: 3rem;">
+            <div style="display: inline-block; width: 40px; height: 40px; border: 3px solid var(--primary-color, #6366f1); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top: 1rem; color: var(--text-secondary, #6b7280);">加载中...</p>
+        </div>
+        <noscript>
+            <div style="padding: 2rem; text-align: center;">
+                <p>请启用JavaScript以查看完整内容</p>
+            </div>
+        </noscript>
+    </div>
+
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; {{ data.profile.name }} - {{ data.profile.location }}</p>
+        </div>
+    </footer>
+
+    <script>
+        // 页面配置数据
+        window.pageData = {{ data | tojson | safe }};
+    </script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

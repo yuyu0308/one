@@ -1,0 +1,62 @@
+{
+  "profile": {
+    "name": "雨",
+    "title": "前端开发者 / 全栈工程师",
+    "avatar": "/static/uploads/6bd504ad0567400197ac5fc33587be43.png",
+    "bio": "你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。",
+    "email": "1684550253@qq.com",
+    "github": "https://github.com/yourusername",
+    "location": "中国"
+  },
+  "skills": [
+    {
+      "level": 90,
+      "name": "HTML/CSS"
+    },
+    {
+      "level": 85,
+      "name": "JavaScript"
+    },
+    {
+      "level": 80,
+      "name": "Python"
+    },
+    {
+      "level": 75,
+      "name": "React"
+    }
+  ],
+  "projects": [
+    {
+      "id": "2efd9c51-7e14-46a3-96bb-8aa174b357b1",
+      "title": "示例项目1",
+      "description": "这是一个示例项目描述",
+      "image": "/static/uploads/default-project.png",
+      "link": "#",
+      "tags": [
+        "Web",
+        "前端"
+      ]
+    }
+  ],
+  "admin_password": "yx891111",
+  "theme": {
+    "background_type": "image",
+    "cursor_style": "custom",
+    "background_image": "/static/uploads/7c4a63df19cd452e87c34400a7a9d482.png"
+  },
+  "layout": {
+    "modules": [
+      "hero",
+      "skills",
+      "projects",
+      "files"
+    ],
+    "module_order": [
+      "hero",
+      "skills",
+      "projects",
+      "files"
+    ]
+  }
+}

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>管理后台</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#profile" class="nav-item active" data-section="profile">个人信息</a>
+                <a href="#skills" class="nav-item" data-section="skills">技能管理</a>
+                <a href="#projects" class="nav-item" data-section="projects">项目管理</a>
+                <a href="#files" class="nav-item" data-section="files">文件管理</a>
+                <a href="#theme" class="nav-item" data-section="theme">主题设置</a>
+                <a href="#layout" class="nav-item" data-section="layout">布局管理</a>
+                <a href="#stats" class="nav-item" data-section="stats">访问统计</a>
+                <a href="#settings" class="nav-item" data-section="settings">设置</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/" class="btn-view-site">查看网站</a>
+                <button id="logoutBtn" class="btn-logout">退出登录</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Profile Section -->
+            <section id="profile-section" class="content-section active">
+                <h2>个人信息</h2>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">职位/头衔</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bio">个人简介</label>
+                        <textarea id="bio" name="bio" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">邮箱</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="github">GitHub链接</label>
+                        <input type="url" id="github" name="github" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">所在地</label>
+                        <input type="text" id="location" name="location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="avatar">头像URL</label>
+                        <input type="text" id="avatar" name="avatar">
+                        <div class="upload-area">
+                            <input type="file" id="avatarFile" accept="image/*">
+                            <label for="avatarFile" class="upload-btn">上传头像</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </form>
+            </section>
+
+            <!-- Skills Section -->
+            <section id="skills-section" class="content-section">
+                <h2>技能管理</h2>
+                <div id="skillsList"></div>
+                <button id="addSkillBtn" class="btn btn-secondary">添加技能</button>
+                <button id="saveSkillsBtn" class="btn btn-primary">保存技能</button>
+            </section>
+
+            <!-- Files Section -->
+            <section id="files-section" class="content-section">
+                <h2>文件管理</h2>
+                <div class="file-upload-section">
+                    <h3>上传新文件</h3>
+                    <form id="fileUploadForm">
+                        <div class="form-group">
+                            <label for="fileInput">选择文件</label>
+                            <input type="file" id="fileInput" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fileDescription">文件描述</label>
+                            <input type="text" id="fileDescription" placeholder="输入文件描述">
+                        </div>
+                        <button type="submit" class="btn btn-primary">上传文件</button>
+                    </form>
+                </div>
+                <div class="files-list-section">
+                    <h3>已上传文件</h3>
+                    <div id="filesList" class="admin-files-list"></div>
+                </div>
+            </section>
+
+            <!-- Theme Section -->
+            <section id="theme-section" class="content-section">
+                <h2>主题设置</h2>
+                <form id="themeForm">
+                    <div class="form-group">
+                        <label for="backgroundType">背景类型</label>
+                        <select id="backgroundType" name="background_type">
+                            <option value="gradient">渐变色</option>
+                            <option value="image">图片</option>
+                            <option value="solid">纯色</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="gradientOptions">
+                        <label>渐变颜色</label>
+                        <div class="color-picker-group">
+                            <div>
+                                <label>起始颜色</label>
+                                <input type="color" id="backgroundColor" name="background_color" value="#667eea">
+                            </div>
+                            <div>
+                                <label>结束颜色</label>
+                                <input type="color" id="backgroundColorEnd" name="background_color_end" value="#764ba2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="imageOptions" style="display: none;">
+                        <label for="backgroundImage">背景图片URL</label>
+                        <input type="text" id="backgroundImage" name="background_image" placeholder="输入图片URL">
+                        <div class="upload-area">
+                            <input type="file" id="backgroundImageFile" accept="image/*">
+                            <label for="backgroundImageFile" class="upload-btn">上传背景图</label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="solidOptions" style="display: none;">
+                        <label for="solidBackgroundColor">背景颜色</label>
+                        <input type="color" id="solidBackgroundColor" name="solid_background_color" value="#667eea">
+                    </div>
+                    <div class="form-group">
+                        <label for="cursorStyle">鼠标样式</label>
+                        <select id="cursorStyle" name="cursor_style">
+                            <option value="default">默认</option>
+                            <option value="pointer">指针</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存主题</button>
+                </form>
+            </section>
+
+            <!-- Layout Section -->
+            <section id="layout-section" class="content-section">
+                <h2>布局管理</h2>
+                <p class="section-description">拖拽模块来调整页面布局顺序</p>
+                <div id="layoutModules" class="layout-modules"></div>
+                <button id="saveLayoutBtn" class="btn btn-primary">保存布局</button>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects-section" class="content-section">
+                <h2>项目管理</h2>
+                <button id="addProjectBtn" class="btn btn-primary">添加项目</button>
+                <div id="projectsList" class="projects-list"></div>
+            </section>
+
+            <!-- Stats Section -->
+            <section id="stats-section" class="content-section">
+                <h2>访问统计</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>总访问量</h3>
+                        <p id="totalVisits" class="stat-number">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>最后访问时间</h3>
+                        <p id="lastVisit" class="stat-text">-</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section">
+                <h2>设置</h2>
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label for="oldPassword">旧密码</label>
+                        <input type="password" id="oldPassword" name="oldPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">新密码</label>
+                        <input type="password" id="newPassword" name="newPassword" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">确认新密码</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-primary">修改密码</button>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">添加项目</h2>
+            <form id="projectForm">
+                <input type="hidden" id="projectId">
+                <div class="form-group">
+                    <label for="projectTitle">项目名称</label>
+                    <input type="text" id="projectTitle" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectDescription">项目描述</label>
+                    <textarea id="projectDescription" name="description" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="projectImage">图片URL</label>
+                    <input type="text" id="projectImage" name="image">
+                    <div class="upload-area">
+                        <input type="file" id="projectImageFile" accept="image/*">
+                        <label for="projectImageFile" class="upload-btn">上传图片</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="projectLink">项目链接</label>
+                    <input type="url" id="projectLink" name="link" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectTags">标签（用逗号分隔）</label>
+                    <input type="text" id="projectTags" name="tags" placeholder="Web, 前端, JavaScript">
+                </div>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>
