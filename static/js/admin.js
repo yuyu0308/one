@@ -1159,7 +1159,7 @@ loadData();
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function(e) {
         e.preventDefault();
-        
+
         // 移除所有active类
         document.querySelectorAll('.nav-item').forEach(nav => {
             nav.classList.remove('active');
@@ -1167,15 +1167,24 @@ document.querySelectorAll('.nav-item').forEach(item => {
         document.querySelectorAll('.content-section').forEach(section => {
             section.classList.remove('active');
         });
-        
+
         // 添加active类到当前点击的导航项
         this.classList.add('active');
-        
+
         // 显示对应的内容区域
         const sectionName = this.getAttribute('data-section');
         const targetSection = document.getElementById(`${sectionName}-section`);
         if (targetSection) {
             targetSection.classList.add('active');
+
+            // 根据不同section加载相应数据
+            if (sectionName === 'layout') {
+                loadLayout();
+            } else if (sectionName === 'profile') {
+                loadButtons();
+            } else if (sectionName === 'stats') {
+                loadStats();
+            }
         }
     });
 });
