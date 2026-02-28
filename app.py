@@ -169,11 +169,27 @@ def get_data():
 @app.route('/api/profile', methods=['POST'])
 @login_required
 def update_profile():
-    data = load_data()
-    profile_data = request.json
-    data['profile'].update(profile_data)
-    save_data(data)
-    return jsonify({'success': True, 'message': '个人信息已更新'})
+    try:
+        data = load_data()
+        profile_data = request.json
+        
+        if not profile_data:
+            return jsonify({'success': False, 'message': '没有数据'}), 400
+        
+        # 确保profile字段存在
+        if 'profile' not in data:
+            data['profile'] = {}
+        
+        # 更新profile数据，保留不传的字段
+        for key, value in profile_data.items():
+            if value is not None and value != '':
+                data['profile'][key] = value
+        
+        save_data(data)
+        return jsonify({'success': True, 'message': '个人信息已更新'})
+    except Exception as e:
+        print(f'更新profile错误: {str(e)}')
+        return jsonify({'success': False, 'message': f'更新失败: {str(e)}'}), 500
 
 @app.route('/api/skills', methods=['POST'])
 @login_required
@@ -373,11 +389,25 @@ def get_theme():
 @app.route('/api/theme', methods=['POST'])
 @login_required
 def update_theme():
-    data = load_data()
-    theme_data = request.json
-    data['theme'] = theme_data
-    save_data(data)
-    return jsonify({'success': True, 'message': '主题已更新'})
+    try:
+        data = load_data()
+        theme_data = request.json
+        
+        if not theme_data:
+            return jsonify({'success': False, 'message': '没有数据'}), 400
+        
+        # 确保theme字段存在
+        if 'theme' not in data:
+            data['theme'] = {}
+        
+        # 合并主题数据
+        data['theme'].update(theme_data)
+        
+        save_data(data)
+        return jsonify({'success': True, 'message': '主题已更新'})
+    except Exception as e:
+        print(f'更新主题错误: {str(e)}')
+        return jsonify({'success': False, 'message': f'更新失败: {str(e)}'}), 500
 
 # 自定义鼠标上传路由
 @app.route('/api/upload-cursor', methods=['POST'])
@@ -471,11 +501,25 @@ def get_layout():
 @app.route('/api/layout', methods=['POST'])
 @login_required
 def update_layout():
-    data = load_data()
-    layout_data = request.json
-    data['layout'] = layout_data
-    save_data(data)
-    return jsonify({'success': True, 'message': '布局已更新'})
+    try:
+        data = load_data()
+        layout_data = request.json
+        
+        if not layout_data:
+            return jsonify({'success': False, 'message': '没有数据'}), 400
+        
+        # 确保layout字段存在
+        if 'layout' not in data:
+            data['layout'] = {}
+        
+        # 更新布局数据
+        data['layout'].update(layout_data)
+        
+        save_data(data)
+        return jsonify({'success': True, 'message': '布局已更新'})
+    except Exception as e:
+        print(f'更新布局错误: {str(e)}')
+        return jsonify({'success': False, 'message': f'更新失败: {str(e)}'}), 500
 
 # 后台界面主题设置路由
 @app.route('/api/admin-theme', methods=['GET'])
@@ -494,11 +538,25 @@ def get_admin_theme():
 @login_required
 def update_admin_theme():
     """更新后台界面主题配置"""
-    data = load_data()
-    theme_data = request.json
-    data['admin_theme'] = theme_data
-    save_data(data)
-    return jsonify({'success': True, 'message': '后台主题已更新'})
+    try:
+        data = load_data()
+        theme_data = request.json
+        
+        if not theme_data:
+            return jsonify({'success': False, 'message': '没有数据'}), 400
+        
+        # 确保admin_theme字段存在
+        if 'admin_theme' not in data:
+            data['admin_theme'] = {}
+        
+        # 更新主题数据
+        data['admin_theme'].update(theme_data)
+        
+        save_data(data)
+        return jsonify({'success': True, 'message': '后台主题已更新'})
+    except Exception as e:
+        print(f'更新后台主题错误: {str(e)}')
+        return jsonify({'success': False, 'message': f'更新失败: {str(e)}'}), 500
 
 # 模块管理路由
 @app.route('/api/modules', methods=['GET'])

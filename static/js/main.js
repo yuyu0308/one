@@ -6,12 +6,14 @@ async function initPage() {
     const loading = document.getElementById('loading');
     
     try {
-        // 从data.json文件加载数据
-        const response = await fetch('/data.json');
+        // 从data.json文件加载数据，添加时间戳防止缓存
+        const response = await fetch('/data.json?t=' + Date.now());
         if (!response.ok) {
-            throw new Error('无法加载数据');
+            throw new Error(`无法加载数据: ${response.status} ${response.statusText}`);
         }
         pageData = await response.json();
+        
+        console.log('页面数据加载成功:', pageData);
         
         // 应用主题
         applyTheme();
@@ -35,7 +37,7 @@ async function initPage() {
             loading.innerHTML = `
                 <div style="text-align: center; padding: 2rem;">
                     <p style="color: red; margin-bottom: 1rem;">加载失败</p>
-                    <p style="color: #6b7280; font-size: 0.9rem;">请刷新页面重试</p>
+                    <p style="color: #6b7280; font-size: 0.9rem;">${error.message}</p>
                     <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #6366f1; color: white; border: none; border-radius: 5px; cursor: pointer;">刷新页面</button>
                 </div>
             `;
