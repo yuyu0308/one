@@ -155,6 +155,10 @@ function createHeroModule() {
                     <p class="hero-subtitle">${profile.title || '前端开发者 / 全栈工程师'}</p>
                     <p class="hero-bio">${profile.bio || '你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。'}</p>
                     ${createHeroButtons()}
+                    <div class="visit-url">
+                        <span class="visit-url-label">访问地址：</span>
+                        <a href="${window.location.href}" class="visit-url-link" target="_blank" title="在新标签页打开">${window.location.href}</a>
+                    </div>
                 </div>
             </div>
         </div>

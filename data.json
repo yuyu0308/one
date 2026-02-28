@@ -1,1 +1,99 @@
-{"profile": {"name": "雨", "title": "勾八集团董事长", "avatar": "https://placehold.co/160", "bio": "你好！我是一名优秀的董事长，专注于构建优秀的Web应用。", "email": "1684550253@qq.com", "github": "https://github.com/yuyu0308", "location": "中国"}, "skills": [{"level": 90, "name": "HTML/CSS"}, {"level": 85, "name": "JavaScript"}, {"level": 80, "name": "Python"}, {"level": 75, "name": "React"}], "projects": [{"id": "2efd9c51-7e14-46a3-96bb-8aa174b357b1", "title": "示例项目1", "description": "这是一个示例项目描述", "image": "https://placehold.co/320x220", "link": "#", "tags": ["Web", "前端"]}], "admin_password": "yx891111", "theme": {"background_type": "gradient", "cursor_style": "default", "background_color": "#667eea", "background_color_end": "#764ba2", "cursor_options": ["default", "pointer", "crosshair", "move", "text", "wait", "help", "progress", "not-allowed", "zoom-in", "zoom-out", "grab", "grabbing", "custom"], "custom_cursor_url": ""}, "admin_theme": {"primary_color": "#6366f1", "sidebar_bg": "#1f2937", "sidebar_text": "#ffffff", "content_bg": "#f9fafb", "card_bg": "#ffffff", "background_type": "gradient", "background_color": "#1f2937", "background_color_end": "#374151"}, "layout": {"modules": ["hero", "skills", "projects", "files"], "module_order": ["hero", "skills", "projects", "files"]}, "modules": {"hero": {"id": "hero", "title": "个人介绍", "type": "built-in", "visible": true, "order": 0}, "skills": {"id": "skills", "title": "技能专长", "type": "built-in", "visible": true, "order": 1}, "projects": {"id": "projects", "title": "项目作品", "type": "built-in", "visible": true, "order": 2}, "files": {"id": "files", "title": "文件资源", "type": "built-in", "visible": true, "order": 3}}, "buttons": [{"id": "btn_contact", "text": "联系我", "icon": "", "url": "mailto:1684550253@qq.com", "style": "primary", "order": 1}, {"id": "btn_github", "text": "GitHub", "icon": "", "url": "https://github.com/yuyu0308", "style": "secondary", "order": 2}, {"id": "btn_skills", "text": "查看技能", "icon": "🎯", "url": "#skills", "style": "nav", "order": 3}, {"id": "btn_projects", "text": "项目作品", "icon": "🚀", "url": "#projects", "style": "nav", "order": 4}, {"id": "btn_files", "text": "文件资源", "icon": "📁", "url": "#files", "style": "nav", "order": 5}]}
+{
+  "profile": {
+    "name": "雨",
+    "title": "勾八集团董事长",
+    "avatar": "https://placehold.co/160",
+    "bio": "你好！我是一名优秀的董事长，专注于构建优秀的Web应用。",
+    "email": "1684550253@qq.com",
+    "github": "https://github.com/yuyu0308",
+    "location": "中国"
+  },
+  "skills": [],
+  "projects": [],
+  "admin_password": "yx891111",
+  "theme": {
+    "background_type": "gradient",
+    "cursor_style": "default",
+    "background_color": "#667eea",
+    "background_color_end": "#764ba2",
+    "cursor_options": [
+      "default",
+      "pointer",
+      "crosshair",
+      "move",
+      "text",
+      "wait",
+      "help",
+      "progress",
+      "not-allowed",
+      "zoom-in",
+      "zoom-out",
+      "grab",
+      "grabbing",
+      "custom"
+    ],
+    "custom_cursor_url": ""
+  },
+  "admin_theme": {
+    "primary_color": "#6366f1",
+    "sidebar_bg": "#1f2937",
+    "sidebar_text": "#ffffff",
+    "content_bg": "#f9fafb",
+    "card_bg": "#ffffff",
+    "background_type": "gradient",
+    "background_color": "#1f2937",
+    "background_color_end": "#374151"
+  },
+  "layout": {
+    "modules": [
+      "hero",
+      "files"
+    ],
+    "module_order": [
+      "hero",
+      "files"
+    ]
+  },
+  "modules": {
+    "hero": {
+      "id": "hero",
+      "title": "个人介绍",
+      "type": "built-in",
+      "visible": true,
+      "order": 0
+    },
+    "files": {
+      "id": "files",
+      "title": "文件资源",
+      "type": "built-in",
+      "visible": true,
+      "order": 3
+    }
+  },
+  "buttons": [
+    {
+      "id": "btn_contact",
+      "text": "联系我",
+      "icon": "",
+      "url": "mailto:1684550253@qq.com",
+      "style": "primary",
+      "order": 1
+    },
+    {
+      "id": "btn_github",
+      "text": "GitHub",
+      "icon": "",
+      "url": "https://github.com/yuyu0308",
+      "style": "secondary",
+      "order": 2
+    },
+    {
+      "id": "btn_files",
+      "text": "文件资源",
+      "icon": "📁",
+      "url": "#files",
+      "style": "nav",
+      "order": 5
+    }
+  ]
+}
