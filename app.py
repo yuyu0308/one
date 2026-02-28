@@ -376,6 +376,46 @@ def update_theme():
     save_data(data)
     return jsonify({'success': True, 'message': '主题已更新'})
 
+# 自定义鼠标上传路由
+@app.route('/api/upload-cursor', methods=['POST'])
+@login_required
+def upload_cursor():
+    """上传自定义鼠标光标文件"""
+    if 'cursor' not in request.files:
+        return jsonify({'success': False, 'message': '没有文件'}), 400
+    
+    file = request.files['cursor']
+    if file.filename == '':
+        return jsonify({'success': False, 'message': '没有选择文件'}), 400
+    
+    # 检查文件类型（支持 .cur, .png, .svg, .ico）
+    allowed_cursor_types = {'cur', 'png', 'svg', 'ico'}
+    ext = file.filename.rsplit('.', 1)[1].lower()
+    
+    if ext not in allowed_cursor_types:
+        return jsonify({'success': False, 'message': '只支持 .cur, .png, .svg, .ico 格式的光标文件'}), 400
+    
+    # 生成唯一文件名
+    filename = f"cursor_{uuid.uuid4().hex}.{ext}"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    
+    file.save(filepath)
+    cursor_url = f"/static/uploads/{filename}"
+    
+    # 更新数据配置
+    data = load_data()
+    if 'theme' not in data:
+        data['theme'] = {}
+    data['theme']['cursor_style'] = 'custom'
+    data['theme']['custom_cursor_url'] = cursor_url
+    save_data(data)
+    
+    return jsonify({
+        'success': True,
+        'message': '自定义光标上传成功',
+        'cursor_url': cursor_url
+    })
+
 # 布局设置路由
 @app.route('/api/layout', methods=['GET'])
 def get_layout():

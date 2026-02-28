@@ -62,10 +62,18 @@ function applyTheme() {
     }
     
     // 设置鼠标样式
-    if (theme.cursor_style === 'pointer') {
-        body.classList.add('cursor-pointer');
-    } else if (theme.cursor_style === 'custom') {
-        body.classList.add('cursor-custom');
+    const cursorStyle = theme.cursor_style || 'default';
+    
+    // 清除之前的鼠标样式类
+    body.classList.remove('cursor-pointer', 'cursor-custom');
+    body.style.cursor = '';
+    
+    if (cursorStyle === 'custom' && theme.custom_cursor_url) {
+        // 使用自定义鼠标光标
+        body.style.cursor = `url('${theme.custom_cursor_url}'), auto`;
+    } else {
+        // 使用预设鼠标样式
+        body.style.cursor = cursorStyle;
     }
 }
 
@@ -140,7 +148,8 @@ function createHeroModule() {
                 <div class="hero-content">
                     <img src="${profile.avatar || '/static/uploads/default-avatar.png'}" 
                          alt="${profile.name}" 
-                         class="avatar"
+                         class="avatar interactive-avatar"
+                         data-full-size="${profile.avatar || '/static/uploads/default-avatar.png'}"
                          onerror="this.src='https://via.placeholder.com/160'">
                     <h1 class="hero-title">${profile.name || '你的名字'}</h1>
                     <p class="hero-subtitle">${profile.title || '前端开发者 / 全栈工程师'}</p>
@@ -160,6 +169,21 @@ function createHeroModule() {
                             <span>📁</span> 文件资源
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 头像放大模态框 -->
+        <div id="avatar-modal" class="avatar-modal">
+            <div class="avatar-modal-content">
+                <span class="avatar-modal-close">&times;</span>
+                <img id="avatar-modal-image" src="" alt="头像" class="avatar-modal-image">
+                <div class="avatar-modal-controls">
+                    <button class="avatar-control-btn" data-action="rotate-left" title="向左旋转">↺</button>
+                    <button class="avatar-control-btn" data-action="rotate-right" title="向右旋转">↻</button>
+                    <button class="avatar-control-btn" data-action="zoom-in" title="放大">+</button>
+                    <button class="avatar-control-btn" data-action="zoom-out" title="缩小">-</button>
+                    <button class="avatar-control-btn" data-action="reset" title="重置">⟲</button>
                 </div>
             </div>
         </div>
@@ -429,6 +453,9 @@ function initAnimations() {
         });
     });
     
+    // 头像交互功能
+    initAvatarInteraction();
+    
     // 添加滚动动画
     const observerOptions = {
         threshold: 0.1,
@@ -449,6 +476,92 @@ function initAnimations() {
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
         observer.observe(el);
+    });
+}
+
+// 头像交互功能
+function initAvatarInteraction() {
+    const modal = document.getElementById('avatar-modal');
+    const modalImage = document.getElementById('avatar-modal-image');
+    const closeBtn = document.querySelector('.avatar-modal-close');
+    const controlBtns = document.querySelectorAll('.avatar-control-btn');
+    
+    let currentRotation = 0;
+    let currentZoom = 1;
+    
+    // 点击头像打开模态框
+    document.querySelectorAll('.interactive-avatar').forEach(avatar => {
+        avatar.addEventListener('click', function() {
+            const fullSizeUrl = this.getAttribute('data-full-size');
+            modalImage.src = fullSizeUrl;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+    });
+    
+    // 关闭模态框
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        resetAvatarView();
+    });
+    
+    // 点击模态框外部关闭
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            resetAvatarView();
+        }
+    });
+    
+    // 控制按钮功能
+    controlBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const action = btn.getAttribute('data-action');
+            
+            switch (action) {
+                case 'rotate-left':
+                    currentRotation -= 90;
+                    break;
+                case 'rotate-right':
+                    currentRotation += 90;
+                    break;
+                case 'zoom-in':
+                    currentZoom = Math.min(currentZoom + 0.5, 3);
+                    break;
+                case 'zoom-out':
+                    currentZoom = Math.max(currentZoom - 0.5, 0.5);
+                    break;
+                case 'reset':
+                    resetAvatarView();
+                    return;
+            }
+            
+            updateAvatarTransform();
+        });
+    });
+    
+    // 更新头像变换
+    function updateAvatarTransform() {
+        modalImage.style.transform = `rotate(${currentRotation}deg) scale(${currentZoom})`;
+    }
+    
+    // 重置头像视图
+    function resetAvatarView() {
+        currentRotation = 0;
+        currentZoom = 1;
+        updateAvatarTransform();
+    }
+    
+    // ESC键关闭模态框
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            resetAvatarView();
+        }
     });
 }
 
