@@ -653,8 +653,6 @@ document.getElementById('fileUploadForm').addEventListener('submit', async funct
         showToast('上传失败', 'error');
     }
 });
-    }
-});
 
 // Render files list
 function renderFilesList(files) {
