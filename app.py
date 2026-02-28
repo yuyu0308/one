@@ -391,6 +391,102 @@ def update_layout():
     save_data(data)
     return jsonify({'success': True, 'message': '布局已更新'})
 
+# 模块管理路由
+@app.route('/api/modules', methods=['GET'])
+def get_modules():
+    """获取所有模块配置"""
+    data = load_data()
+    modules = data.get('modules', {})
+    return jsonify(modules)
+
+@app.route('/api/modules', methods=['POST'])
+@login_required
+def add_module():
+    """添加自定义模块"""
+    data = load_data()
+    module_data = request.json
+    
+    # 确保modules字段存在
+    if 'modules' not in data:
+        data['modules'] = {}
+    
+    # 生成模块ID
+    module_id = module_data.get('id') or f"custom_{uuid.uuid4().hex[:8]}"
+    
+    # 保存模块配置
+    data['modules'][module_id] = {
+        'id': module_id,
+        'title': module_data.get('title', '新模块'),
+        'content': module_data.get('content', ''),
+        'type': module_data.get('type', 'custom'),
+        'link': module_data.get('link', ''),
+        'visible': module_data.get('visible', True),
+        'order': module_data.get('order', 0),
+        'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    
+    # 更新模块顺序
+    if 'layout' not in data:
+        data['layout'] = {}
+    if 'module_order' not in data['layout']:
+        data['layout']['module_order'] = []
+    
+    if module_id not in data['layout']['module_order']:
+        data['layout']['module_order'].append(module_id)
+    
+    save_data(data)
+    return jsonify({'success': True, 'message': '模块已添加', 'module': data['modules'][module_id]})
+
+@app.route('/api/modules/<module_id>', methods=['PUT'])
+@login_required
+def update_module(module_id):
+    """更新模块配置"""
+    data = load_data()
+    
+    if 'modules' not in data or module_id not in data['modules']:
+        return jsonify({'success': False, 'message': '模块未找到'}), 404
+    
+    module_data = request.json
+    data['modules'][module_id].update(module_data)
+    data['modules'][module_id]['updated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    save_data(data)
+    return jsonify({'success': True, 'message': '模块已更新', 'module': data['modules'][module_id]})
+
+@app.route('/api/modules/<module_id>', methods=['DELETE'])
+@login_required
+def delete_module(module_id):
+    """删除模块"""
+    data = load_data()
+    
+    if 'modules' not in data or module_id not in data['modules']:
+        return jsonify({'success': False, 'message': '模块未找到'}), 404
+    
+    # 从模块列表中删除
+    del data['modules'][module_id]
+    
+    # 从模块顺序中删除
+    if 'layout' in data and 'module_order' in data['layout']:
+        data['layout']['module_order'] = [mid for mid in data['layout']['module_order'] if mid != module_id]
+    
+    save_data(data)
+    return jsonify({'success': True, 'message': '模块已删除'})
+
+@app.route('/api/modules/order', methods=['POST'])
+@login_required
+def update_module_order():
+    """更新模块显示顺序"""
+    data = load_data()
+    order_data = request.json.get('order', [])
+    
+    if 'layout' not in data:
+        data['layout'] = {}
+    
+    data['layout']['module_order'] = order_data
+    
+    save_data(data)
+    return jsonify({'success': True, 'message': '模块顺序已更新'})
+
 # 启动时初始化
 init_data()
 

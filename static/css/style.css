@@ -97,6 +97,24 @@ body.cursor-custom {
     transition: all 0.3s ease;
 }
 
+/* 平滑模糊过渡效果 */
+body.blur-transition {
+    filter: blur(8px);
+    transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+body.blur-transition::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
 .section-title {
     text-align: center;
     font-size: 2.25rem;
@@ -217,6 +235,47 @@ body.cursor-custom {
     background: white;
     color: var(--primary-color);
     border-color: white;
+}
+
+/* Hero导航按钮 */
+.hero-navigation {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.nav-btn {
+    padding: 0.8rem 1.8rem;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.nav-btn span {
+    font-size: 1.2rem;
+}
+
+.nav-btn:hover {
+    background: white;
+    color: var(--primary-color);
+    border-color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.nav-btn:active {
+    transform: translateY(-1px);
 }
 
 /* Skills - 优化卡片设计 */

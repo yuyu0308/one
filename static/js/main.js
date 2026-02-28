@@ -122,6 +122,12 @@ async function createModule(moduleName) {
             return null;
     }
     
+    // 添加模块跳转功能
+    module.style.cursor = 'pointer';
+    module.addEventListener('click', () => {
+        scrollToModule(moduleName);
+    });
+    
     return module;
 }
 
@@ -142,6 +148,17 @@ function createHeroModule() {
                     <div class="hero-links">
                         <a href="mailto:${profile.email}" class="btn btn-primary">联系我</a>
                         <a href="${profile.github}" class="btn btn-secondary" target="_blank">GitHub</a>
+                    </div>
+                    <div class="hero-navigation">
+                        <button class="nav-btn" data-target="skills">
+                            <span>🎯</span> 查看技能
+                        </button>
+                        <button class="nav-btn" data-target="projects">
+                            <span>🚀</span> 项目作品
+                        </button>
+                        <button class="nav-btn" data-target="files">
+                            <span>📁</span> 文件资源
+                        </button>
                     </div>
                 </div>
             </div>
@@ -357,6 +374,26 @@ function updateModuleOrder() {
     alert('模块顺序已更新（仅本地保存）');
 }
 
+// 平滑滚动到指定模块（带模糊动画）
+function scrollToModule(moduleName) {
+    const targetModule = document.getElementById(`module-${moduleName}`);
+    if (!targetModule) return;
+    
+    // 添加模糊动画效果
+    document.body.classList.add('blur-transition');
+    
+    // 滚动到目标模块
+    targetModule.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+    
+    // 移除模糊效果
+    setTimeout(() => {
+        document.body.classList.remove('blur-transition');
+    }, 500);
+}
+
 // 初始化动画
 function initAnimations() {
     // 技能条动画
@@ -381,6 +418,14 @@ function initAnimations() {
                     behavior: 'smooth'
                 });
             }
+        });
+    });
+    
+    // Hero区域导航按钮点击事件
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            scrollToModule(target);
         });
     });
     
