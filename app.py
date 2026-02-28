@@ -325,15 +325,18 @@ def upload_file_resource():
 @app.route('/api/files/<file_id>', methods=['DELETE'])
 @login_required
 def delete_file(file_id):
-    files = load_files()
-    file_to_delete = None
-    
-    for file_info in files:
-        if file_info['id'] == file_id:
-            file_to_delete = file_info
-            break
-    
-    if file_to_delete:
+    try:
+        files = load_files()
+        file_to_delete = None
+        
+        for file_info in files:
+            if file_info['id'] == file_id:
+                file_to_delete = file_info
+                break
+        
+        if not file_to_delete:
+            return jsonify({'success': False, 'message': '文件未找到'}), 404
+        
         # 删除物理文件
         filepath = os.path.join(app.config['FILES_FOLDER'], file_to_delete['filename'])
         if os.path.exists(filepath):
@@ -344,8 +347,8 @@ def delete_file(file_id):
         save_files(files)
         
         return jsonify({'success': True, 'message': '文件已删除'})
-    
-    return jsonify({'success': False, 'message': '文件未找到'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'删除失败: {str(e)}'}), 500
 
 @app.route('/files/<filename>')
 def download_file(filename):

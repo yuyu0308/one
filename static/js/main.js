@@ -245,45 +245,82 @@ function createProjectsModule() {
 
 // Files模块
 async function createFilesModule() {
-    const files = pageData.files || [];
-    
-    if (files.length === 0) {
-        return '';
-    }
-    
-    let filesHtml = files.map(file => {
-        const icon = getFileIcon(file.type);
-        const size = formatFileSize(file.size);
+    try {
+        // 从API获取文件列表
+        const response = await fetch('/api/files');
+        if (!response.ok) {
+            throw new Error('无法加载文件列表');
+        }
+        const files = await response.json();
+        
+        if (!files || files.length === 0) {
+            return `
+                <section class="section files-section">
+                    <div class="container">
+                        <h2 class="section-title">文件资源</h2>
+                        <p style="text-align: center; color: rgba(255,255,255,0.7);">暂无文件</p>
+                    </div>
+                </section>
+            `;
+        }
+        
+        let filesHtml = files.map(file => {
+            const icon = getFileIcon(file.type);
+            const size = formatFileSize(file.size);
+            const downloadUrl = `/files/${file.filename}`;
+            
+            return `
+                <div class="file-card">
+                    <div class="file-icon">${icon}</div>
+                    <div class="file-name">${file.original_name}</div>
+                    <div class="file-description">${file.description || '暂无描述'}</div>
+                    <div class="file-info">
+                        <span>${size}</span>
+                        <span>${file.downloads || 0} 次下载</span>
+                    </div>
+                    <a href="${downloadUrl}"
+                       class="file-download-btn"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       onclick="incrementDownload('${file.id}'); return true;">
+                        下载文件
+                    </a>
+                </div>
+            `;
+        }).join('');
         
         return `
-            <div class="file-card">
-                <div class="file-icon">${icon}</div>
-                <div class="file-name">${file.name}</div>
-                <div class="file-description">${file.description || '暂无描述'}</div>
-                <div class="file-info">
-                    <span>${size}</span>
-                    <span>${file.downloads || 0} 次下载</span>
+            <section class="section files-section">
+                <div class="container">
+                    <h2 class="section-title">文件资源</h2>
+                    <div class="files-grid">
+                        ${filesHtml}
+                    </div>
                 </div>
-                <a href="${file.url}" 
-                   class="file-download-btn"
-                   target="_blank"
-                   rel="noopener noreferrer">
-                    下载文件
-                </a>
-            </div>
+            </section>
         `;
-    }).join('');
-    
-    return `
-        <section class="section files-section">
-            <div class="container">
-                <h2 class="section-title">文件资源</h2>
-                <div class="files-grid">
-                    ${filesHtml}
+    } catch (error) {
+        console.error('加载文件模块失败:', error);
+        return `
+            <section class="section files-section">
+                <div class="container">
+                    <h2 class="section-title">文件资源</h2>
+                    <p style="text-align: center; color: rgba(255,255,255,0.7);">文件加载失败</p>
                 </div>
-            </div>
-        </section>
-    `;
+            </section>
+        `;
+    }
+}
+
+// 增加下载计数
+async function incrementDownload(fileId) {
+    try {
+        await fetch(`/api/files/${fileId}/download`, {
+            method: 'POST'
+        });
+    } catch (error) {
+        console.error('记录下载次数失败:', error);
+    }
 }
 
 // 获取文件图标
