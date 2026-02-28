@@ -477,6 +477,29 @@ def update_layout():
     save_data(data)
     return jsonify({'success': True, 'message': '布局已更新'})
 
+# 后台界面主题设置路由
+@app.route('/api/admin-theme', methods=['GET'])
+def get_admin_theme():
+    """获取后台界面主题配置"""
+    data = load_data()
+    return jsonify(data.get('admin_theme', {
+        'primary_color': '#6366f1',
+        'sidebar_bg': '#1f2937',
+        'sidebar_text': '#ffffff',
+        'content_bg': '#f9fafb',
+        'card_bg': '#ffffff'
+    }))
+
+@app.route('/api/admin-theme', methods=['POST'])
+@login_required
+def update_admin_theme():
+    """更新后台界面主题配置"""
+    data = load_data()
+    theme_data = request.json
+    data['admin_theme'] = theme_data
+    save_data(data)
+    return jsonify({'success': True, 'message': '后台主题已更新'})
+
 # 模块管理路由
 @app.route('/api/modules', methods=['GET'])
 def get_modules():

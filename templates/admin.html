@@ -145,6 +145,12 @@
                             <option value="custom">自定义</option>
                         </select>
                     </div>
+                    <div class="form-group" id="cursorUploadGroup" style="display: none;">
+                        <label for="cursorFile">自定义鼠标文件</label>
+                        <input type="file" id="cursorFile" accept=".cur,.png,.svg,.ico">
+                        <button type="button" id="uploadCursorBtn" class="btn btn-secondary">上传鼠标文件</button>
+                        <p class="help-text">支持格式：.cur, .png, .svg, .ico</p>
+                    </div>
                     <button type="submit" class="btn btn-primary">保存主题</button>
                 </form>
             </section>

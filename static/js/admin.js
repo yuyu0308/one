@@ -260,6 +260,48 @@ document.getElementById('avatarFile').addEventListener('change', async function(
     }
 });
 
+// Cursor style change listener
+document.getElementById('cursorStyle').addEventListener('change', function() {
+    const cursorUploadGroup = document.getElementById('cursorUploadGroup');
+    if (this.value === 'custom') {
+        cursorUploadGroup.style.display = 'block';
+    } else {
+        cursorUploadGroup.style.display = 'none';
+    }
+});
+
+// Cursor upload
+document.getElementById('uploadCursorBtn').addEventListener('click', async function() {
+    const fileInput = document.getElementById('cursorFile');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        showToast('请选择文件', 'error');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('cursor', file);
+
+    try {
+        const response = await fetch('/api/upload-cursor', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            showToast('鼠标文件上传成功', 'success');
+            // 应用新鼠标样式
+            document.body.style.cursor = `url('${data.cursor_url}'), auto`;
+        } else {
+            showToast(data.message || '上传失败', 'error');
+        }
+    } catch (error) {
+        showToast('上传失败', 'error');
+    }
+});
+
 // Skills management
 function renderSkills() {
     const skillsList = document.getElementById('skillsList');
