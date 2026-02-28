@@ -80,6 +80,9 @@ function initializeForms() {
     // Projects list
     renderProjects();
     
+    // Buttons list
+    loadButtons();
+    
     // Stats
     loadStats();
 }
@@ -704,6 +707,50 @@ async function loadButtons() {
         console.error('加载按钮失败:', error);
     }
 }
+
+// 保存按钮配置
+document.getElementById('saveButtonsBtn')?.addEventListener('click', async function() {
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        // 从DOM中获取所有按钮数据
+        const buttonItems = document.querySelectorAll('.admin-button-item');
+        const buttons = [];
+        
+        buttonItems.forEach(item => {
+            const buttonId = item.getAttribute('data-button-id');
+            const text = item.querySelector('.button-text')?.textContent || '';
+            const metaText = item.querySelector('.button-meta')?.textContent || '';
+            
+            // 解析元数据
+            const styleMatch = metaText.match(/样式:\s*(\w+)/);
+            const orderMatch = metaText.match(/顺序:\s*(\d+)/);
+            
+            buttons.push({
+                id: buttonId,
+                text: text.replace(/^[^\w\u4e00-\u9fa5]+/, ''), // 移除图标
+                icon: text.match(/^[^\w\u4e00-\u9fa5]+/)?.[0] || '',
+                style: styleMatch ? styleMatch[1] : 'primary',
+                order: orderMatch ? parseInt(orderMatch[1]) : buttons.length + 1
+            });
+        });
+        
+        data.buttons = buttons;
+        
+        await fetch('/api/data', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        showToast('按钮配置已保存', 'success');
+        loadButtons();
+    } catch (error) {
+        console.error('保存按钮配置失败:', error);
+        showToast('保存失败', 'error');
+    }
+});
 
 // 添加按钮
 document.getElementById('addButtonBtn')?.addEventListener('click', function() {
