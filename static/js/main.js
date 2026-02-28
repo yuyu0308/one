@@ -155,10 +155,7 @@ function createHeroModule() {
                     <p class="hero-subtitle">${profile.title || '前端开发者 / 全栈工程师'}</p>
                     <p class="hero-bio">${profile.bio || '你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。'}</p>
                     ${createHeroButtons()}
-                    <div class="visit-url">
-                        <span class="visit-url-label">访问地址：</span>
-                        <a href="${window.location.href}" class="visit-url-link" target="_blank" title="在新标签页打开">${window.location.href}</a>
-                    </div>
+                    ${createAnnouncement()}
                 </div>
             </div>
         </div>
@@ -216,6 +213,29 @@ function createHeroButtons() {
     }
     
     return html;
+}
+
+// 公告栏模块
+function createAnnouncement() {
+    const announcement = pageData.announcement;
+    if (!announcement || !announcement.enabled || !announcement.text) {
+        return '';
+    }
+    
+    const type = announcement.type || 'info';
+    const typeColors = {
+        'info': 'rgba(99, 102, 241, 0.2)',
+        'warning': 'rgba(245, 158, 11, 0.2)',
+        'success': 'rgba(16, 185, 129, 0.2)',
+        'error': 'rgba(239, 68, 68, 0.2)'
+    };
+    
+    return `
+        <div class="announcement-bar" style="background: ${typeColors[type] || typeColors.info}">
+            <span class="announcement-icon">📢</span>
+            <span class="announcement-text">${announcement.text}</span>
+        </div>
+    `;
 }
 
 // Skills模块

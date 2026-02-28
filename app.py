@@ -231,6 +231,14 @@ def update_profile():
             if value is not None and value != '':
                 data['profile'][key] = value
         
+        # 处理公告栏设置
+        if 'announcementEnabled' in profile_data:
+            if 'announcement' not in data:
+                data['announcement'] = {}
+            data['announcement']['enabled'] = profile_data['announcementEnabled']
+            data['announcement']['text'] = profile_data.get('announcementText', '')
+            data['announcement']['type'] = profile_data.get('announcementType', 'info')
+        
         save_data(data)
         return jsonify({'success': True, 'message': '个人信息已更新'})
     except Exception as e:

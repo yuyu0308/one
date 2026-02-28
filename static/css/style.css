@@ -418,39 +418,26 @@ body.bg-image .hero {
     font-size: 1.2rem;
 }
 
-/* 访问地址 */
-.visit-url {
-    margin-top: 2.5rem;
+/* 公告栏 */
+.announcement-bar {
+    margin-top: 2rem;
     padding: 1rem 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     display: inline-flex;
     align-items: center;
     gap: 0.8rem;
     backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.visit-url-label {
-    color: rgba(255, 255, 255, 0.9);
+.announcement-icon {
+    font-size: 1.2rem;
+}
+
+.announcement-text {
+    color: rgba(255, 255, 255, 0.95);
     font-size: 0.95rem;
     font-weight: 500;
-}
-
-.visit-url-link {
-    color: var(--primary-light);
-    text-decoration: none;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    font-size: 0.9rem;
-    padding: 0.3rem 0.8rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-.visit-url-link:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
 }
 
 .nav-btn:hover {

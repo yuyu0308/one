@@ -74,6 +74,13 @@ function initializeForms() {
         document.getElementById('avatar').value = currentData.profile.avatar || '';
     }
     
+    // Announcement settings
+    if (currentData.announcement) {
+        document.getElementById('announcementEnabled').checked = currentData.announcement.enabled || false;
+        document.getElementById('announcementText').value = currentData.announcement.text || '';
+        document.getElementById('announcementType').value = currentData.announcement.type || 'info';
+    }
+    
     // Skills list
     renderSkills();
     
@@ -287,7 +294,10 @@ document.getElementById('profileForm').addEventListener('submit', async function
         email: document.getElementById('email').value,
         github: document.getElementById('github').value,
         location: document.getElementById('location').value,
-        avatar: document.getElementById('avatar').value
+        avatar: document.getElementById('avatar').value,
+        announcementEnabled: document.getElementById('announcementEnabled').checked,
+        announcementText: document.getElementById('announcementText').value,
+        announcementType: document.getElementById('announcementType').value
     };
     
     try {
@@ -1207,29 +1217,32 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
-            });
-
-        // 添加active类到当前点击的导航项
-        this.classList.add('active');
-
-        // 显示对应的内容区域
-        const sectionName = this.getAttribute('data-section');
-        const targetSection = document.getElementById(`${sectionName}-section`);
-        if (targetSection) {
-            targetSection.classList.add('active');
-
-            // 根据不同section加载相应数据
-            if (sectionName === 'layout') {
-                loadLayout();
-            } else if (sectionName === 'profile') {
-                loadButtons();
-            } else if (sectionName === 'stats') {
-                loadStats();
-            }
-        }
-    });
-});
-
+                        });
+                
+                        // 添加active类到当前点击的导航项
+                        this.classList.add('active');
+                
+                        // 显示对应的内容区域
+                        const sectionName = this.getAttribute('data-section');
+                        console.log('切换到:', sectionName);
+                        const targetSection = document.getElementById(`${sectionName}-section`);
+                        if (targetSection) {
+                            targetSection.classList.add('active');
+                            console.log('显示区域:', sectionName);
+                
+                            // 根据不同section加载相应数据
+                            if (sectionName === 'layout') {
+                                loadLayout();
+                            } else if (sectionName === 'profile') {
+                                loadButtons();
+                            } else if (sectionName === 'stats') {
+                                loadStats();
+                            }
+                        } else {
+                            console.error('未找到区域:', sectionName);
+                        }
+                    });
+                });
 // 退出登录
 document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logoutBtn');
