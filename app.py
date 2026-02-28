@@ -344,45 +344,80 @@ def get_files():
 @app.route('/api/files', methods=['POST'])
 @login_required
 def upload_file_resource():
-    if 'file' not in request.files:
+    if 'files' not in request.files:
         return jsonify({'success': False, 'message': '没有文件'}), 400
-    
-    file = request.files['file']
+
+    files = request.files.getlist('files')
     description = request.form.get('description', '')
-    
-    if file.filename == '':
+    folder = request.form.get('folder', '').strip()
+
+    if not files or all(f.filename == '' for f in files):
         return jsonify({'success': False, 'message': '没有选择文件'}), 400
-    
-    if file and allowed_file_upload(file.filename):
-        # 生成唯一文件名
-        ext = file.filename.rsplit('.', 1)[1].lower()
-        unique_filename = f"{uuid.uuid4().hex}.{ext}"
-        filepath = os.path.join(app.config['FILES_FOLDER'], unique_filename)
-        
-        file.save(filepath)
-        
-        # 保存文件信息
-        files = load_files()
-        file_info = {
-            'id': str(uuid.uuid4()),
-            'original_name': file.filename,
-            'filename': unique_filename,
-            'description': description,
-            'size': os.path.getsize(filepath),
-            'upload_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'type': ext,
-            'downloads': 0
-        }
-        files.append(file_info)
-        save_files(files)
-        
+
+    uploaded_files = []
+    errors = []
+
+    for file in files:
+        if file.filename == '':
+            continue
+
+        if allowed_file_upload(file.filename):
+            try:
+                # 生成唯一文件名
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                unique_filename = f"{uuid.uuid4().hex}.{ext}"
+
+                # 如果有文件夹，创建文件夹路径
+                if folder:
+                    folder_path = os.path.join(app.config['FILES_FOLDER'], folder)
+                    os.makedirs(folder_path, exist_ok=True)
+                    filepath = os.path.join(folder_path, unique_filename)
+                    relative_path = f"{folder}/{unique_filename}"
+                else:
+                    filepath = os.path.join(app.config['FILES_FOLDER'], unique_filename)
+                    relative_path = unique_filename
+
+                file.save(filepath)
+
+                # 保存文件信息
+                files_db = load_files()
+                file_info = {
+                    'id': str(uuid.uuid4()),
+                    'original_name': file.filename,
+                    'filename': unique_filename,
+                    'relative_path': relative_path,
+                    'folder': folder if folder else None,
+                    'description': description,
+                    'size': os.path.getsize(filepath),
+                    'upload_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'type': ext,
+                    'downloads': 0
+                }
+                files_db.append(file_info)
+                save_files(files_db)
+
+                uploaded_files.append(file_info)
+            except Exception as e:
+                errors.append(f"{file.filename}: {str(e)}")
+        else:
+            errors.append(f"{file.filename}: 不支持的文件格式")
+
+    if uploaded_files:
+        message = f'成功上传 {len(uploaded_files)} 个文件'
+        if errors:
+            message += f'，{len(errors)} 个文件失败'
         return jsonify({
             'success': True,
-            'message': '文件上传成功',
-            'file': file_info
+            'message': message,
+            'files': uploaded_files,
+            'errors': errors
         })
-    
-    return jsonify({'success': False, 'message': '不支持的文件格式'}), 400
+
+    return jsonify({
+        'success': False,
+        'message': '文件上传失败',
+        'errors': errors
+    }), 400
 
 @app.route('/api/files/<file_id>', methods=['DELETE'])
 @login_required
@@ -412,8 +447,9 @@ def delete_file(file_id):
     except Exception as e:
         return jsonify({'success': False, 'message': f'删除失败: {str(e)}'}), 500
 
-@app.route('/files/<filename>')
+@app.route('/files/<path:filename>')
 def download_file(filename):
+    # 支持文件夹路径（例如：documents/file.pdf）
     return send_from_directory(app.config['FILES_FOLDER'], filename, as_attachment=True)
 
 @app.route('/api/files/<file_id>/download', methods=['POST'])

@@ -95,12 +95,17 @@
                     <h3>上传新文件</h3>
                     <form id="fileUploadForm">
                         <div class="form-group">
-                            <label for="fileInput">选择文件</label>
-                            <input type="file" id="fileInput" required>
+                            <label for="fileInput">选择文件（支持批量上传）</label>
+                            <input type="file" id="fileInput" multiple required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fileFolder">文件夹（可选）</label>
+                            <input type="text" id="fileFolder" placeholder="例如：documents, images, projects">
+                            <p class="help-text">输入文件夹名称以将文件组织到不同目录中</p>
                         </div>
                         <div class="form-group">
                             <label for="fileDescription">文件描述</label>
-                            <input type="text" id="fileDescription" placeholder="输入文件描述">
+                            <input type="text" id="fileDescription" placeholder="输入文件描述（批量上传时所有文件使用相同描述）">
                         </div>
                         <button type="submit" class="btn btn-primary">上传文件</button>
                     </form>

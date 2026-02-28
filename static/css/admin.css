@@ -452,6 +452,29 @@ body.admin-bg-solid {
     padding: 1rem;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
+    margin-bottom: 1rem;
+}
+
+.file-folder {
+    margin: 1.5rem 0 0.5rem 0;
+}
+
+.file-folder h3 {
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #6366f1;
+}
+
+.file-folder-badge {
+    display: inline-block;
+    background: #6366f1;
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
 }
 
 .admin-file-item.missing {

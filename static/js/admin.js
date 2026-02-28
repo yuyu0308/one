@@ -596,35 +596,53 @@ window.onclick = function(event) {
 // File upload
 document.getElementById('fileUploadForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    
+
     const fileInput = document.getElementById('fileInput');
     const description = document.getElementById('fileDescription').value;
-    
+    const folder = document.getElementById('fileFolder').value.trim();
+
     if (fileInput.files.length === 0) {
         showToast('请选择文件', 'error');
         return;
     }
-    
+
     const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
+    // 批量上传所有选中的文件
+    for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append('files', fileInput.files[i]);
+    }
     formData.append('description', description);
-    
+    if (folder) {
+        formData.append('folder', folder);
+    }
+
     try {
+        showToast(`正在上传 ${fileInput.files.length} 个文件...`, 'info');
         const response = await fetch('/api/files', {
             method: 'POST',
             body: formData
         });
-        
+
         const data = await response.json();
         if (data.success) {
-            showToast('文件上传成功', 'success');
+            showToast(data.message, 'success');
             document.getElementById('fileUploadForm').reset();
             loadFiles();
+
+            if (data.errors && data.errors.length > 0) {
+                console.warn('部分文件上传失败:', data.errors);
+                setTimeout(() => {
+                    showToast(`${data.errors.length} 个文件上传失败，请查看控制台详情`, 'warning');
+                }, 2000);
+            }
         } else {
-            showToast('上传失败', 'error');
+            showToast(data.message || '上传失败', 'error');
         }
     } catch (error) {
+        console.error('上传错误:', error);
         showToast('上传失败', 'error');
+    }
+});
     }
 });
 
@@ -632,28 +650,50 @@ document.getElementById('fileUploadForm').addEventListener('submit', async funct
 function renderFilesList(files) {
     const filesList = document.getElementById('filesList');
     filesList.innerHTML = '';
-    
+
     if (files.length === 0) {
         filesList.innerHTML = '<p>暂无文件</p>';
         return;
     }
-    
+
+    // 按文件夹分组
+    const groupedFiles = {};
     files.forEach(file => {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'admin-file-item';
-        fileItem.innerHTML = `
-            <h4>${file.original_name}</h4>
-            <p>${file.description || '暂无描述'}</p>
-            <div class="file-meta">
-                <span>${formatFileSize(file.size)}</span>
-                <span>${file.downloads} 次下载</span>
-            </div>
-            <div class="file-actions">
-                <a href="/files/${file.filename}" class="btn-edit" download>下载</a>
-                <button class="btn-remove" onclick="deleteFile('${file.id}')">删除</button>
-            </div>
-        `;
-        filesList.appendChild(fileItem);
+        const folder = file.folder || 'root';
+        if (!groupedFiles[folder]) {
+            groupedFiles[folder] = [];
+        }
+        groupedFiles[folder].push(file);
+    });
+
+    // 渲染文件夹和文件
+    Object.keys(groupedFiles).forEach(folder => {
+        if (folder !== 'root') {
+            const folderDiv = document.createElement('div');
+            folderDiv.className = 'file-folder';
+            folderDiv.innerHTML = `<h3>📁 ${folder}</h3>`;
+            filesList.appendChild(folderDiv);
+        }
+
+        groupedFiles[folder].forEach(file => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'admin-file-item';
+            fileItem.innerHTML = `
+                <h4>${file.original_name}</h4>
+                ${file.folder ? `<span class="file-folder-badge">${file.folder}</span>` : ''}
+                <p>${file.description || '暂无描述'}</p>
+                <div class="file-meta">
+                    <span>${formatFileSize(file.size)}</span>
+                    <span>${file.downloads} 次下载</span>
+                    <span>${file.upload_date}</span>
+                </div>
+                <div class="file-actions">
+                    <a href="/files/${file.relative_path || file.filename}" class="btn-edit" download>下载</a>
+                    <button class="btn-remove" onclick="deleteFile('${file.id}')">删除</button>
+                </div>
+            `;
+            filesList.appendChild(fileItem);
+        });
     });
 }
 
