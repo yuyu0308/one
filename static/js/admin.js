@@ -38,6 +38,21 @@ async function loadLayout() {
 // Load files
 async function loadFiles() {
     try {
+        // 先检查文件状态
+        const statusResponse = await fetch('/api/files/status');
+        const statusData = await statusResponse.json();
+        
+        const warningElement = document.getElementById('filesStatusWarning');
+        const missingCountElement = document.getElementById('missingFilesCount');
+        
+        if (statusData.missing > 0) {
+            warningElement.style.display = 'block';
+            missingCountElement.textContent = statusData.missing;
+        } else {
+            warningElement.style.display = 'none';
+        }
+        
+        // 加载文件列表
         const response = await fetch('/api/files');
         const files = await response.json();
         renderFilesList(files);
@@ -724,10 +739,12 @@ document.getElementById('themeForm').addEventListener('submit', async function(e
             showToast('后台主题已保存', 'success');
             applyAdminTheme(adminThemeData);
         } else {
-            showToast(data.message || '保存失败', 'error');
+            console.error('后台主题保存失败:', data);
+            showToast(data.message || '后台主题保存失败', 'error');
         }
     } catch (error) {
-        showToast('后台主题保存失败', 'error');
+        console.error('后台主题保存错误:', error);
+        showToast('后台主题保存失败: ' + error.message, 'error');
     }
 });
 
@@ -783,7 +800,11 @@ document.querySelectorAll('.nav-item').forEach(item => {
         
         this.classList.add('active');
         const sectionId = this.getAttribute('data-section') + '-section';
-        document.getElementById(sectionId).classList.add('active');
+        const sectionElement = document.getElementById(sectionId);
+        
+        if (sectionElement) {
+            sectionElement.classList.add('active');
+        }
         
         // Load specific section data
         const sectionName = this.getAttribute('data-section');
@@ -793,6 +814,8 @@ document.querySelectorAll('.nav-item').forEach(item => {
             loadTheme();
         } else if (sectionName === 'layout') {
             loadLayout();
+        } else if (sectionName === 'stats') {
+            loadStats();
         }
     });
 });

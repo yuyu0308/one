@@ -608,6 +608,27 @@ def serve_data_json():
 # 启动时初始化
 init_data()
 
+@app.route('/api/files/status', methods=['GET'])
+def check_files_status():
+    """检查文件状态，返回哪些文件丢失"""
+    files = load_files()
+    missing_files = []
+    
+    for file_info in files:
+        filepath = os.path.join(app.config['FILES_FOLDER'], file_info['filename'])
+        if not os.path.exists(filepath):
+            missing_files.append({
+                'id': file_info['id'],
+                'name': file_info['original_name'],
+                'filename': file_info['filename']
+            })
+    
+    return jsonify({
+        'total': len(files),
+        'missing': len(missing_files),
+        'missing_files': missing_files
+    })
+
 if __name__ == '__main__':
     # Railway使用环境变量PORT
     port = int(os.environ.get('PORT', 5000))

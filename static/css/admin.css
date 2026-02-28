@@ -380,6 +380,11 @@ body {
     border: 1px solid #e0e0e0;
 }
 
+.admin-file-item.missing {
+    background: #fff3cd;
+    border-color: #ffc107;
+}
+
 .admin-file-item h4 {
     margin-bottom: 0.5rem;
     color: #2c3e50;
@@ -403,6 +408,38 @@ body {
 .admin-file-item .file-actions {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
+}
+
+.file-missing-badge {
+    display: inline-block;
+    background: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+.file-missing-hint {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-right: auto;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-warning strong {
+    display: block;
+    margin-bottom: 0.5rem;
+}
 }
 
 /* Theme Section */

@@ -78,6 +78,9 @@
             <!-- Files Section -->
             <section id="files-section" class="content-section">
                 <h2>文件管理</h2>
+                <div id="filesStatusWarning" class="alert-warning" style="display: none;">
+                    <strong>⚠️ 警告：</strong> 有 <span id="missingFilesCount">0</span> 个文件在重新部署后丢失，请重新上传。
+                </div>
                 <div class="file-upload-section">
                     <h3>上传新文件</h3>
                     <form id="fileUploadForm">
