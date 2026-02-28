@@ -150,21 +150,7 @@ function createHeroModule() {
                     <h1 class="hero-title">${profile.name || '你的名字'}</h1>
                     <p class="hero-subtitle">${profile.title || '前端开发者 / 全栈工程师'}</p>
                     <p class="hero-bio">${profile.bio || '你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。'}</p>
-                    <div class="hero-links">
-                        <a href="mailto:${profile.email}" class="btn btn-primary">联系我</a>
-                        <a href="${profile.github}" class="btn btn-secondary" target="_blank">GitHub</a>
-                    </div>
-                    <div class="hero-navigation">
-                        <button class="nav-btn" data-target="skills">
-                            <span>🎯</span> 查看技能
-                        </button>
-                        <button class="nav-btn" data-target="projects">
-                            <span>🚀</span> 项目作品
-                        </button>
-                        <button class="nav-btn" data-target="files">
-                            <span>📁</span> 文件资源
-                        </button>
-                    </div>
+                    ${createHeroButtons()}
                 </div>
             </div>
         </div>
@@ -184,6 +170,40 @@ function createHeroModule() {
             </div>
         </div>
     `;
+}
+
+// 创建Hero按钮
+function createHeroButtons() {
+    const buttons = pageData.buttons || [];
+    if (buttons.length === 0) return '';
+    
+    const primaryButtons = buttons.filter(b => b.style === 'primary');
+    const navButtons = buttons.filter(b => b.style === 'nav');
+    const secondaryButtons = buttons.filter(b => b.style === 'secondary');
+    
+    let html = '';
+    
+    // 主按钮组
+    if (primaryButtons.length > 0 || secondaryButtons.length > 0) {
+        html += '<div class="hero-links">';
+        [...primaryButtons, ...secondaryButtons].forEach(btn => {
+            const icon = btn.icon ? `<span>${btn.icon}</span> ` : '';
+            html += `<a href="${btn.url}" class="btn ${btn.style === 'primary' ? 'btn-primary' : 'btn-secondary'}" ${btn.url.startsWith('http') ? 'target="_blank"' : ''}>${icon}${btn.text}</a>`;
+        });
+        html += '</div>';
+    }
+    
+    // 导航按钮组
+    if (navButtons.length > 0) {
+        html += '<div class="hero-navigation">';
+        navButtons.forEach(btn => {
+            const icon = btn.icon ? `<span>${btn.icon}</span> ` : '';
+            html += `<button class="nav-btn" data-target="${btn.url.replace('#', '')}">${icon}${btn.text}</button>`;
+        });
+        html += '</div>';
+    }
+    
+    return html;
 }
 
 // Skills模块

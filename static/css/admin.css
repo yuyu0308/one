@@ -449,6 +449,72 @@ body {
     display: block;
     margin-bottom: 0.5rem;
 }
+
+/* Buttons Management */
+.buttons-management {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.buttons-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.buttons-header h4 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.buttons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.admin-button-item {
+    background: var(--admin-card-bg, #f8f9fa);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.button-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.button-text {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.button-meta {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.button-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.button-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.button-edit-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
 }
 
 /* Theme Section */

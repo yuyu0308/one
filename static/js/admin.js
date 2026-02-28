@@ -675,6 +675,163 @@ function deleteFile(fileId) {
     }
 }
 
+// Buttons management
+async function loadButtons() {
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        const buttons = data.buttons || [];
+        const buttonsList = document.getElementById('buttonsList');
+        
+        if (buttons.length === 0) {
+            buttonsList.innerHTML = '<p class="empty-state">暂无按钮</p>';
+            return;
+        }
+        
+        buttonsList.innerHTML = buttons.map(btn => `
+            <div class="admin-button-item" data-button-id="${btn.id}">
+                <div class="button-info">
+                    <span class="button-text">${btn.icon}${btn.text}</span>
+                    <span class="button-meta">样式: ${btn.style} • 顺序: ${btn.order}</span>
+                </div>
+                <div class="button-actions">
+                    <button class="btn btn-sm btn-edit" onclick="editButton('${btn.id}')">编辑</button>
+                    <button class="btn btn-sm btn-delete" onclick="deleteButton('${btn.id}')">删除</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('加载按钮失败:', error);
+    }
+}
+
+// 添加按钮
+document.getElementById('addButtonBtn')?.addEventListener('click', function() {
+    const buttonsList = document.getElementById('buttonsList');
+    const newId = 'btn_' + Date.now();
+    
+    const btnHtml = `
+        <div class="admin-button-item" data-button-id="${newId}">
+            <div class="button-edit-form">
+                <div class="form-group">
+                    <label>按钮文字</label>
+                    <input type="text" class="button-text-input" value="新按钮">
+                </div>
+                <div class="form-group">
+                    <label>图标</label>
+                    <input type="text" class="button-icon-input" placeholder="如: 🎯">
+                </div>
+                <div class="form-group">
+                    <label>链接</label>
+                    <input type="text" class="button-url-input" value="#">
+                </div>
+                <div class="form-group">
+                    <label>样式</label>
+                    <select class="button-style-input">
+                        <option value="primary">主按钮</option>
+                        <option value="secondary">次按钮</option>
+                        <option value="nav">导航按钮</option>
+                    </select>
+                </div>
+                <div class="button-edit-actions">
+                    <button class="btn btn-primary" onclick="saveButton('${newId}')">保存</button>
+                    <button class="btn btn-secondary" onclick="cancelEditButton('${newId}')">取消</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    buttonsList.insertAdjacentHTML('afterbegin', btnHtml);
+});
+
+// 保存按钮
+async function saveButton(buttonId) {
+    const btnItem = document.querySelector(`[data-button-id="${buttonId}"]`);
+    const text = btnItem.querySelector('.button-text-input').value;
+    const icon = btnItem.querySelector('.button-icon-input').value;
+    const url = btnItem.querySelector('.button-url-input').value;
+    const style = btnItem.querySelector('.button-style-input').value;
+    
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        if (!data.buttons) data.buttons = [];
+        
+        const existingIndex = data.buttons.findIndex(b => b.id === buttonId);
+        const buttonData = {
+            id: buttonId,
+            text: text,
+            icon: icon,
+            url: url,
+            style: style,
+            order: existingIndex >= 0 ? data.buttons[existingIndex].order : data.buttons.length + 1
+        };
+        
+        if (existingIndex >= 0) {
+            data.buttons[existingIndex] = buttonData;
+        } else {
+            data.buttons.push(buttonData);
+        }
+        
+        await fetch('/api/data', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        showToast('按钮已保存', 'success');
+        loadButtons();
+    } catch (error) {
+        showToast('保存失败', 'error');
+    }
+}
+
+// 编辑按钮
+function editButton(buttonId) {
+    const btnItem = document.querySelector(`[data-button-id="${buttonId}"]`);
+    const text = btnItem.querySelector('.button-text').textContent;
+    
+    // 简单实现：用prompt
+    const newText = prompt('编辑按钮文字:', text);
+    if (newText) {
+        btnItem.querySelector('.button-text').textContent = newText;
+        showToast('请点击保存按钮配置', 'success');
+    }
+}
+
+// 取消编辑
+function cancelEditButton(buttonId) {
+    const btnItem = document.querySelector(`[data-button-id="${buttonId}"]`);
+    if (btnItem && confirm('取消编辑?')) {
+        btnItem.remove();
+        loadButtons();
+    }
+}
+
+// 删除按钮
+async function deleteButton(buttonId) {
+    if (!confirm('确定要删除这个按钮吗?')) return;
+    
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        data.buttons = data.buttons.filter(b => b.id !== buttonId);
+        
+        await fetch('/api/data', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        showToast('按钮已删除', 'success');
+        loadButtons();
+    } catch (error) {
+        showToast('删除失败', 'error');
+    }
+}
+
 // Theme form
 document.getElementById('backgroundType').addEventListener('change', updateThemeOptions);
 
