@@ -660,10 +660,16 @@ function initAvatarInteraction() {
     const modalImage = document.getElementById('avatar-modal-image');
     const closeBtn = document.querySelector('.avatar-modal-close');
     const controlBtns = document.querySelectorAll('.avatar-control-btn');
-    
+
+    // 检查必要元素是否存在
+    if (!modal || !modalImage) {
+        console.warn('头像模态框元素不存在，跳过初始化');
+        return;
+    }
+
     let currentRotation = 0;
     let currentZoom = 1;
-    
+
     // 点击头像打开模态框
     document.querySelectorAll('.interactive-avatar').forEach(avatar => {
         avatar.addEventListener('click', function() {
@@ -673,13 +679,15 @@ function initAvatarInteraction() {
             document.body.style.overflow = 'hidden';
         });
     });
-    
+
     // 关闭模态框
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-        resetAvatarView();
-    });
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            resetAvatarView();
+        });
+    }
     
     // 点击模态框外部关闭
     modal.addEventListener('click', (e) => {
