@@ -86,7 +86,7 @@ function applyTheme() {
 async function renderModules() {
     const container = document.getElementById('modules-container');
     const layout = pageData.layout || {};
-    const moduleOrder = layout.module_order || ['hero', 'skills', 'projects', 'files'];
+    const moduleOrder = layout.module_order || ['hero', 'files'];
     
     // 移除加载指示器
     const loading = document.getElementById('loading');
