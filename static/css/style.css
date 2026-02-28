@@ -12,6 +12,7 @@
     --secondary-color: #ec4899;
     --text-primary: #1f2937;
     --text-secondary: #6b7280;
+    --text-on-gradient: #ffffff;
     --bg-primary: #f9fafb;
     --bg-secondary: #ffffff;
     --border-color: #e5e7eb;
@@ -26,6 +27,20 @@ body {
     color: var(--text-primary);
     background: var(--bg-primary);
     transition: background 0.3s ease;
+}
+
+/* 渐变背景下的文本颜色 */
+body.bg-gradient .section-title,
+body.bg-gradient .skill-name,
+body.bg-gradient .project-title,
+body.bg-gradient .file-name,
+body.bg-gradient .nav-title {
+    color: var(--text-on-gradient);
+}
+
+body.bg-gradient .skill-level,
+body.bg-gradient .project-link {
+    color: var(--text-on-gradient);
 }
 
 .container {
@@ -156,7 +171,7 @@ body.cursor-custom {
 
 /* Navbar */
 .navbar {
-    background: rgba(255, 255, 255, 0.98);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     box-shadow: var(--shadow-sm);
     position: sticky;
@@ -164,7 +179,8 @@ body.cursor-custom {
     z-index: 1000;
     padding: 1rem 0;
     transition: all 0.3s ease;
-    color: var(--text-primary) !important;
+    color: white !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navbar .container {
@@ -400,7 +416,7 @@ body.blur-transition::after {
 
 /* Skills - 优化卡片设计 */
 .skills-section {
-    background: white;
+    background: transparent;
 }
 
 .skills-grid {
@@ -411,7 +427,7 @@ body.blur-transition::after {
 }
 
 .skill-item {
-    background: var(--bg-primary);
+    background: rgba(255, 255, 255, 0.95);
     padding: 1.5rem;
     border-radius: 16px;
     box-shadow: var(--shadow-sm);
@@ -456,7 +472,7 @@ body.blur-transition::after {
 
 /* Projects - 优化卡片 */
 .projects-section {
-    background: var(--bg-primary);
+    background: transparent;
 }
 
 .projects-grid {
@@ -466,7 +482,7 @@ body.blur-transition::after {
 }
 
 .project-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
     overflow: hidden;
     box-shadow: var(--shadow-md);
@@ -539,7 +555,7 @@ body.blur-transition::after {
 
 /* Files - 优化设计 */
 .files-section {
-    background: white;
+    background: transparent;
 }
 
 .files-grid {
@@ -549,7 +565,7 @@ body.blur-transition::after {
 }
 
 .file-card {
-    background: var(--bg-primary);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 16px;
     padding: 2rem 1.5rem;
     box-shadow: var(--shadow-sm);
