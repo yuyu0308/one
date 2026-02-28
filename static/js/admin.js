@@ -122,7 +122,10 @@ function initializeLayoutEditor() {
         'hero': 'Hero区域',
         'skills': '技能展示',
         'projects': '项目作品',
-        'files': '文件资源'
+        'files': '文件资源',
+        'about': '关于我',
+        'contact': '联系方式',
+        'custom': '自定义模块'
     };
     
     modules.forEach((moduleName, index) => {
@@ -882,6 +885,34 @@ async function deleteButton(buttonId) {
 // Theme form
 document.getElementById('backgroundType').addEventListener('change', updateThemeOptions);
 
+// 前端主题背景图上传
+document.getElementById('backgroundImageFile')?.addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        showToast('正在上传图片...', 'info');
+        const response = await fetch('/api/upload-background', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById('backgroundImage').value = data.url;
+            showToast('图片上传成功', 'success');
+        } else {
+            showToast(data.message || '上传失败', 'error');
+        }
+    } catch (error) {
+        console.error('上传背景图失败:', error);
+        showToast('上传失败', 'error');
+    }
+});
+
 document.getElementById('themeForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -1007,6 +1038,43 @@ async function loadStats() {
         document.getElementById('lastVisit').textContent = stats.last_visit || '-';
     } catch (error) {
         console.error('加载统计数据失败', error);
+    }
+}
+
+// Apply admin theme to UI
+function applyAdminTheme(themeData) {
+    if (!themeData) return;
+
+    // Apply CSS variables
+    const root = document.documentElement;
+
+    if (themeData.primary_color) {
+        root.style.setProperty('--admin-primary', themeData.primary_color);
+    }
+    if (themeData.sidebar_bg) {
+        root.style.setProperty('--admin-sidebar-bg', themeData.sidebar_bg);
+    }
+    if (themeData.sidebar_text) {
+        root.style.setProperty('--admin-sidebar-text', themeData.sidebar_text);
+    }
+    if (themeData.content_bg) {
+        root.style.setProperty('--admin-content-bg', themeData.content_bg);
+    }
+    if (themeData.card_bg) {
+        root.style.setProperty('--admin-card-bg', themeData.card_bg);
+    }
+
+    // Apply sidebar background
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && themeData.background_type) {
+        if (themeData.background_type === 'gradient' && themeData.background_color && themeData.background_color_end) {
+            sidebar.style.background = `linear-gradient(180deg, ${themeData.background_color}, ${themeData.background_color_end})`;
+        } else if (themeData.background_type === 'image' && themeData.background_image) {
+            sidebar.style.background = `url(${themeData.background_image}) no-repeat center center`;
+            sidebar.style.backgroundSize = 'cover';
+        } else if (themeData.background_type === 'solid' && themeData.background_color) {
+            sidebar.style.background = themeData.background_color;
+        }
     }
 }
 

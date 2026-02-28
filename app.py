@@ -513,6 +513,41 @@ def upload_avatar():
     except Exception as e:
         return jsonify({'success': False, 'message': f'上传失败: {str(e)}'}), 500
 
+@app.route('/api/upload-background', methods=['POST'])
+@login_required
+def upload_background():
+    """上传背景图片"""
+    if 'file' not in request.files:
+        return jsonify({'success': False, 'message': '没有文件'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'success': False, 'message': '没有选择文件'}), 400
+
+    # 检查文件类型
+    allowed_types = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    ext = file.filename.rsplit('.', 1)[1].lower()
+
+    if ext not in allowed_types:
+        return jsonify({'success': False, 'message': '只支持图片格式（PNG, JPG, GIF, WebP）'}), 400
+
+    try:
+        # 生成唯一文件名
+        filename = f"background_{uuid.uuid4().hex[:8]}.{ext}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        # 保存文件
+        file.save(filepath)
+        background_url = f"/static/uploads/{filename}"
+
+        return jsonify({
+            'success': True,
+            'message': '背景图片上传成功',
+            'url': background_url
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'上传失败: {str(e)}'}), 500
+
 # 布局设置路由
 @app.route('/api/layout', methods=['GET'])
 def get_layout():
