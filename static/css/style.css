@@ -252,6 +252,11 @@ body.blur-transition::after {
     overflow: hidden;
 }
 
+/* 当body有背景图片时，Hero不显示渐变背景 */
+body.bg-image .hero {
+    background: transparent;
+}
+
 .hero-content {
     max-width: 800px;
     margin: 0 auto;
