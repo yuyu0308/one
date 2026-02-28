@@ -130,12 +130,6 @@ async function createModule(moduleName) {
             return null;
     }
     
-    // 添加模块跳转功能
-    module.style.cursor = 'pointer';
-    module.addEventListener('click', () => {
-        scrollToModule(moduleName);
-    });
-    
     return module;
 }
 
@@ -445,12 +439,13 @@ function initAnimations() {
         });
     });
     
-    // Hero区域导航按钮点击事件
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const target = this.getAttribute('data-target');
+    // Hero区域导航按钮点击事件 - 使用事件委托
+    document.addEventListener('click', function(e) {
+        const navBtn = e.target.closest('.nav-btn');
+        if (navBtn) {
+            const target = navBtn.getAttribute('data-target');
             scrollToModule(target);
-        });
+        }
     });
     
     // 头像交互功能
