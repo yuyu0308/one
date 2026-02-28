@@ -32,6 +32,88 @@ function initializeForms() {
     }
 }
 
+// Avatar upload
+document.getElementById('avatarFile').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('avatar', file);
+    
+    try {
+        const response = await fetch('/api/upload-avatar', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            showToast('头像上传成功', 'success');
+            document.getElementById('avatar').value = data.avatar_url;
+        } else {
+            showToast(data.message || '上传失败', 'error');
+        }
+    } catch (error) {
+        showToast('上传失败', 'error');
+    }
+});
+
+// Background image upload
+document.getElementById('backgroundImageFile').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+        const response = await fetch('/api/upload-background', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            showToast('背景图上传成功', 'success');
+            document.getElementById('backgroundImage').value = data.url;
+        } else {
+            showToast(data.message || '上传失败', 'error');
+        }
+    } catch (error) {
+        showToast('上传失败', 'error');
+    }
+});
+
+// Cursor upload
+document.getElementById('uploadCursorBtn').addEventListener('click', async function() {
+    const fileInput = document.getElementById('cursorFile');
+    const file = fileInput.files[0];
+    if (!file) {
+        showToast('请选择文件', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    try {
+        const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            showToast('鼠标文件上传成功', 'success');
+            document.getElementById('customCursorUrl').value = data.url;
+        } else {
+            showToast(data.message || '上传失败', 'error');
+        }
+    } catch (error) {
+        showToast('上传失败', 'error');
+    }
+});
+
 // Profile form submit
 document.getElementById('profileForm').addEventListener('submit', async function(e) {
     e.preventDefault();
