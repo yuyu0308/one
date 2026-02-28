@@ -92,6 +92,42 @@ async function loadFilesList() {
     }
 }
 
+// Load stats
+async function loadStats() {
+    try {
+        const response = await fetch('/api/stats');
+        const stats = await response.json();
+        
+        const totalVisits = document.getElementById('totalVisits');
+        const lastVisit = document.getElementById('lastVisit');
+        const visitorLogs = document.getElementById('visitorLogs');
+        
+        if (totalVisits) {
+            totalVisits.textContent = stats.visits || 0;
+        }
+        
+        if (lastVisit) {
+            lastVisit.textContent = stats.last_visit || '-';
+        }
+        
+        if (visitorLogs && stats.visitor_logs) {
+            let html = '';
+            stats.visitor_logs.forEach(log => {
+                html += `
+                    <tr>
+                        <td>${log.ip || '未知'}</td>
+                        <td>${log.timestamp || '-'}</td>
+                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${log.user_agent || '-'}</td>
+                    </tr>
+                `;
+            });
+            visitorLogs.innerHTML = html;
+        }
+    } catch (error) {
+        console.error('加载统计数据失败', error);
+    }
+}
+
 // Delete file
 async function deleteFile(fileId) {
     if (!confirm('确定要删除这个文件吗？')) return;
@@ -379,9 +415,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (targetSection) {
                     targetSection.classList.add('active');
                     
-                    // Load files list when switching to files section
+                    // Load specific data based on section
                     if (sectionName === 'files') {
                         loadFilesList();
+                    } else if (sectionName === 'stats') {
+                        loadStats();
                     }
                 }
             });
