@@ -487,6 +487,15 @@ def update_module_order():
     save_data(data)
     return jsonify({'success': True, 'message': '模块顺序已更新'})
 
+# 静态文件路由 - 提供data.json访问
+@app.route('/data.json')
+def serve_data_json():
+    data = load_data()
+    # 不返回密码
+    if 'admin_password' in data:
+        del data['admin_password']
+    return jsonify(data)
+
 # 启动时初始化
 init_data()
 
