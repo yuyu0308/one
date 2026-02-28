@@ -146,12 +146,11 @@ function createHeroModule() {
         <div class="hero">
             <div class="container">
                 <div class="hero-content">
-                    <img src="${avatarUrl}" 
-                         alt="${profile.name || '用户头像'}" 
+                    <img src="${avatarUrl}"
+                         alt="${profile.name || '用户头像'}"
                          class="avatar interactive-avatar"
-                         onerror="this.src='/static/uploads/default-avatar.png'; console.warn('头像加载失败，使用默认头像')"
                          data-full-size="${profile.avatar || 'https://placehold.co/160'}"
-                         onerror="this.src='https://placehold.co/160'">
+                         onerror="this.src='https://placehold.co/160'; console.warn('头像加载失败，使用默认头像')">
                     <h1 class="hero-title">${profile.name || '你的名字'}</h1>
                     <p class="hero-subtitle">${profile.title || '前端开发者 / 全栈工程师'}</p>
                     <p class="hero-bio">${profile.bio || '你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。'}</p>
@@ -204,8 +203,10 @@ function createHeroButtons() {
     if (navButtons.length > 0) {
         html += '<div class="hero-navigation">';
         navButtons.forEach(btn => {
+            if (!btn || !btn.url) return; // 跳过无效按钮
             const icon = btn.icon ? `<span>${btn.icon}</span> ` : '';
-            html += `<button class="nav-btn" data-target="${btn.url.replace('#', '')}">${icon}${btn.text}</button>`;
+            const target = btn.url && typeof btn.url === 'string' ? btn.url.replace('#', '') : '';
+            html += `<button class="nav-btn" data-target="${target}">${icon}${btn.text}</button>`;
         });
         html += '</div>';
     }
