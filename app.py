@@ -419,6 +419,49 @@ def upload_cursor():
         'cursor_url': cursor_url
     })
 
+# 头像上传路由
+@app.route('/api/upload-avatar', methods=['POST'])
+@login_required
+def upload_avatar():
+    """上传或更换头像"""
+    if 'avatar' not in request.files:
+        return jsonify({'success': False, 'message': '没有文件'}), 400
+    
+    file = request.files['avatar']
+    if file.filename == '':
+        return jsonify({'success': False, 'message': '没有选择文件'}), 400
+    
+    # 检查文件类型（支持图片格式）
+    allowed_avatar_types = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    ext = file.filename.rsplit('.', 1)[1].lower()
+    
+    if ext not in allowed_avatar_types:
+        return jsonify({'success': False, 'message': '只支持图片格式（PNG, JPG, GIF, WebP）'}), 400
+    
+    try:
+        # 生成唯一文件名，使用固定前缀确保每次更新替换旧头像
+        filename = f"avatar.{ext}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        # 保存文件
+        file.save(filepath)
+        avatar_url = f"/static/uploads/{filename}"
+        
+        # 更新数据配置
+        data = load_data()
+        if 'profile' not in data:
+            data['profile'] = {}
+        data['profile']['avatar'] = avatar_url
+        save_data(data)
+        
+        return jsonify({
+            'success': True,
+            'message': '头像上传成功',
+            'avatar_url': avatar_url
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'上传失败: {str(e)}'}), 500
+
 # 布局设置路由
 @app.route('/api/layout', methods=['GET'])
 def get_layout():

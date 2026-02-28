@@ -234,20 +234,25 @@ document.getElementById('avatarFile').addEventListener('change', async function(
     const file = e.target.files[0];
     if (file) {
         const formData = new FormData();
-        formData.append('file', file);
-        
+        formData.append('avatar', file);
+
         try {
-            const response = await fetch('/api/upload', {
+            const response = await fetch('/api/upload-avatar', {
                 method: 'POST',
                 body: formData
             });
-            
+
             const data = await response.json();
             if (data.success) {
-                document.getElementById('avatar').value = data.url;
+                document.getElementById('avatar').value = data.avatar_url;
                 showToast('头像上传成功', 'success');
+                // 实时预览
+                const avatarPreview = document.querySelector('.avatar-preview');
+                if (avatarPreview) {
+                    avatarPreview.src = data.avatar_url;
+                }
             } else {
-                showToast('上传失败', 'error');
+                showToast(data.message || '上传失败', 'error');
             }
         } catch (error) {
             showToast('上传失败', 'error');
