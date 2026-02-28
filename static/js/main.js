@@ -145,8 +145,8 @@ function createHeroModule() {
                     <img src="${profile.avatar || '/static/uploads/default-avatar.png'}" 
                          alt="${profile.name}" 
                          class="avatar interactive-avatar"
-                         data-full-size="${profile.avatar || '/static/uploads/default-avatar.png'}"
-                         onerror="this.src='https://via.placeholder.com/160'">
+                         data-full-size="${profile.avatar || 'https://placehold.co/160'}"
+                         onerror="this.src='https://placehold.co/160'">
                     <h1 class="hero-title">${profile.name || '你的名字'}</h1>
                     <p class="hero-subtitle">${profile.title || '前端开发者 / 全栈工程师'}</p>
                     <p class="hero-bio">${profile.bio || '你好！我是一名热爱技术的开发者，专注于构建优秀的Web应用。'}</p>
@@ -241,7 +241,7 @@ function createProjectsModule() {
             <img src="${project.image}" 
                  alt="${project.title}" 
                  class="project-image"
-                 onerror="this.src='https://via.placeholder.com/320x220'">
+                 onerror="this.src='https://placehold.co/320x220'">
             <div class="project-content">
                 <h3 class="project-title">${project.title}</h3>
                 <p class="project-description">${project.description}</p>
