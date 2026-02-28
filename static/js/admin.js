@@ -756,14 +756,6 @@ function applyAdminTheme(theme) {
     document.documentElement.style.setProperty('--admin-content-bg', theme.content_bg);
     document.documentElement.style.setProperty('--admin-card-bg', theme.card_bg);
 }
-            showToast('主题已保存', 'success');
-        } else {
-            showToast('保存失败', 'error');
-        }
-    } catch (error) {
-        showToast('保存失败', 'error');
-    }
-});
 
 // Background image upload
 document.getElementById('backgroundImageFile').addEventListener('change', async function(e) {
