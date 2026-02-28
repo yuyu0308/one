@@ -15,7 +15,7 @@ CORS(app)
 UPLOAD_FOLDER = 'static/uploads'
 FILES_FOLDER = 'static/files'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-ALLOWED_FILE_EXTENSIONS = {'pdf', 'doc', 'docx', 'txt', 'zip', 'rar', 'mp4', 'mp3', 'avi', 'mkv', 'xlsx', 'xls', 'ppt', 'pptx'}
+ALLOWED_FILE_EXTENSIONS = {'pdf', 'doc', 'docx', 'txt', 'zip', 'rar', 'mp4', 'mp3', 'avi', 'mkv', 'xlsx', 'xls', 'ppt', 'pptx', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['FILES_FOLDER'] = FILES_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB最大上传
