@@ -483,6 +483,95 @@ function initDragAndDrop() {
 
 let draggedModule = null;
 
+// 拖拽开始
+function handleDragStart(e) {
+    draggedModule = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+// 拖拽结束
+function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    document.querySelectorAll('.module').forEach(module => {
+        module.classList.remove('drag-over');
+    });
+}
+
+// 拖拽经过
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+// 拖拽进入
+function handleDragEnter(e) {
+    this.classList.add('drag-over');
+}
+
+// 拖拽离开
+function handleDragLeave(e) {
+    this.classList.remove('drag-over');
+}
+
+// 放置
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+
+    if (draggedModule !== this) {
+        // 交换模块位置
+        const allModules = [...document.querySelectorAll('.module')];
+        const draggedIndex = allModules.indexOf(draggedModule);
+        const droppedIndex = allModules.indexOf(this);
+
+        if (draggedIndex < droppedIndex) {
+            this.parentNode.insertBefore(draggedModule, this.nextSibling);
+        } else {
+            this.parentNode.insertBefore(draggedModule, this);
+        }
+
+        // 保存新的模块顺序
+        saveModuleOrder();
+    }
+
+    return false;
+}
+
+// 保存模块顺序
+async function saveModuleOrder() {
+    try {
+        const modules = document.querySelectorAll('.module');
+        const moduleOrder = [];
+        
+        modules.forEach(module => {
+            const id = module.id.replace('module-', '');
+            moduleOrder.push(id);
+        });
+
+        const response = await fetch('/api/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                module_order: moduleOrder
+            })
+        });
+
+        if (!response.ok) {
+            console.error('保存模块顺序失败');
+        }
+    } catch (error) {
+        console.error('保存模块顺序出错:', error);
+    }
+}
+
 // 平滑滚动到指定模块（带模糊动画）
 function scrollToModule(moduleName) {
     const targetModule = document.getElementById(`module-${moduleName}`);
