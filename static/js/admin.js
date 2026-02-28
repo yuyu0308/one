@@ -56,6 +56,63 @@ function showToast(message, type) {
     }
 }
 
+// Load files list
+async function loadFilesList() {
+    try {
+        const response = await fetch('/api/files');
+        const files = await response.json();
+        
+        const filesList = document.getElementById('filesList');
+        if (!filesList) return;
+        
+        if (!files || files.length === 0) {
+            filesList.innerHTML = '<p>暂无文件</p>';
+            return;
+        }
+        
+        let html = '<table class="files-table"><thead><tr><th>文件名</th><th>描述</th><th>文件夹</th><th>操作</th></tr></thead><tbody>';
+        
+        files.forEach(file => {
+            html += `
+                <tr>
+                    <td>${file.name || file.filename || '未知'}</td>
+                    <td>${file.description || '-'}</td>
+                    <td>${file.folder || '-'}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="deleteFile('${file.id || file.filename}')">删除</button>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table>';
+        filesList.innerHTML = html;
+    } catch (error) {
+        console.error('加载文件列表失败', error);
+    }
+}
+
+// Delete file
+async function deleteFile(fileId) {
+    if (!confirm('确定要删除这个文件吗？')) return;
+    
+    try {
+        const response = await fetch(`/api/files/${fileId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            showToast('文件删除成功', 'success');
+            loadFilesList();
+        } else {
+            showToast(data.message || '删除失败', 'error');
+        }
+    } catch (error) {
+        showToast('删除失败', 'error');
+    }
+}
+
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', function() {
     // Profile form submit
@@ -240,6 +297,55 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // File upload form submit
+    const fileUploadForm = document.getElementById('fileUploadForm');
+    if (fileUploadForm) {
+        fileUploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('fileInput');
+            const fileFolder = document.getElementById('fileFolder');
+            const fileDescription = document.getElementById('fileDescription');
+            
+            const files = fileInput.files;
+            if (!files || files.length === 0) {
+                showToast('请选择文件', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+            if (fileFolder && fileFolder.value) {
+                formData.append('folder', fileFolder.value);
+            }
+            if (fileDescription && fileDescription.value) {
+                formData.append('description', fileDescription.value);
+            }
+            
+            try {
+                const response = await fetch('/api/files', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('文件上传成功', 'success');
+                    fileInput.value = '';
+                    if (fileFolder) fileFolder.value = '';
+                    if (fileDescription) fileDescription.value = '';
+                    loadFilesList();
+                } else {
+                    showToast(data.message || '上传失败', 'error');
+                }
+            } catch (error) {
+                showToast('上传失败', 'error');
+            }
+        });
+    }
+    
     // Logout
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
@@ -272,6 +378,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const targetSection = document.getElementById(`${sectionName}-section`);
                 if (targetSection) {
                     targetSection.classList.add('active');
+                    
+                    // Load files list when switching to files section
+                    if (sectionName === 'files') {
+                        loadFilesList();
+                    }
                 }
             });
         });
