@@ -77,7 +77,7 @@ def init_data():
     
     if not os.path.exists(STATS_FILE):
         with open(STATS_FILE, 'w', encoding='utf-8') as f:
-            json.dump({'visits': 0, 'last_visit': None}, f, ensure_ascii=False, indent=2)
+            json.dump({'visits': 0, 'last_visit': None, 'visitor_logs': []}, f, ensure_ascii=False, indent=2)
     
     if not os.path.exists(FILES_DB_FILE):
         with open(FILES_DB_FILE, 'w', encoding='utf-8') as f:
@@ -129,8 +129,28 @@ def index():
     stats = load_stats()
     stats['visits'] += 1
     stats['last_visit'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # 记录访问者IP
+    visitor_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    # 处理多个IP的情况（代理链）
+    if ',' in visitor_ip:
+        visitor_ip = visitor_ip.split(',')[0].strip()
+
+    visitor_log = {
+        'ip': visitor_ip,
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'user_agent': request.headers.get('User-Agent', 'Unknown')
+    }
+
+    # 保留最近100条访问记录
+    if 'visitor_logs' not in stats:
+        stats['visitor_logs'] = []
+    stats['visitor_logs'].append(visitor_log)
+    if len(stats['visitor_logs']) > 100:
+        stats['visitor_logs'] = stats['visitor_logs'][-100:]
+
     save_stats(stats)
-    
+
     data = load_data()
     return render_template('index.html', data=data)
 

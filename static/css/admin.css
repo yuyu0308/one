@@ -360,6 +360,61 @@ body.admin-bg-solid {
     color: #2c3e50;
 }
 
+/* Visitor Logs */
+.visitor-logs {
+    margin-top: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.visitor-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.visitor-table thead {
+    background: #667eea;
+    color: white;
+}
+
+.visitor-table th,
+.visitor-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.visitor-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.visitor-table .ip-address {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.visitor-table .visit-time {
+    color: #666;
+}
+
+.visitor-table .user-agent {
+    color: #999;
+    font-size: 0.9rem;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.visitor-table .no-data {
+    text-align: center;
+    color: #999;
+    padding: 2rem;
+}
+
 /* Files Section */
 .file-upload-section {
     background: white;

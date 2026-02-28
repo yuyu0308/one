@@ -1036,6 +1036,20 @@ async function loadStats() {
         const stats = await response.json();
         document.getElementById('totalVisits').textContent = stats.visits || 0;
         document.getElementById('lastVisit').textContent = stats.last_visit || '-';
+
+        // 加载访问者记录
+        const visitorLogs = document.getElementById('visitorLogs');
+        if (stats.visitor_logs && stats.visitor_logs.length > 0) {
+            visitorLogs.innerHTML = stats.visitor_logs.map(log => `
+                <tr>
+                    <td class="ip-address">${log.ip}</td>
+                    <td class="visit-time">${log.timestamp}</td>
+                    <td class="user-agent">${log.user_agent}</td>
+                </tr>
+            `).join('');
+        } else {
+            visitorLogs.innerHTML = '<tr><td colspan="3" class="no-data">暂无访问记录</td></tr>';
+        }
     } catch (error) {
         console.error('加载统计数据失败', error);
     }
