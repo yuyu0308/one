@@ -115,6 +115,7 @@ function initializeLayoutEditor() {
         moduleDiv.innerHTML = `
             <h3>${moduleNames[moduleName] || moduleName}</h3>
             <span class="drag-handle">☰</span>
+            <button class="btn-delete-module" data-module="${moduleName}">删除</button>
         `;
         
         moduleDiv.addEventListener('dragstart', handleLayoutDragStart);
@@ -122,6 +123,17 @@ function initializeLayoutEditor() {
         moduleDiv.addEventListener('dragover', handleLayoutDragOver);
         moduleDiv.addEventListener('drop', handleLayoutDrop);
         moduleDiv.addEventListener('dragleave', handleLayoutDragLeave);
+        
+        // 删除按钮事件
+        const deleteBtn = moduleDiv.querySelector('.btn-delete-module');
+        deleteBtn.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const moduleToDelete = this.getAttribute('data-module');
+            if (confirm(`确定要删除模块"${moduleNames[moduleToDelete] || moduleToDelete}"吗？`)) {
+                await deleteModule(moduleToDelete);
+                moduleDiv.remove();
+            }
+        });
         
         container.appendChild(moduleDiv);
     });
@@ -165,6 +177,53 @@ function handleLayoutDrop(e) {
         }
     }
 }
+
+// Delete module
+async function deleteModule(moduleId) {
+    try {
+        const response = await fetch(`/api/modules/${moduleId}`, {
+            method: 'DELETE'
+        });
+        const data = await response.json();
+        if (data.success) {
+            showToast('模块已删除', 'success');
+        } else {
+            showToast(data.message || '删除失败', 'error');
+        }
+    } catch (error) {
+        showToast('删除失败', 'error');
+    }
+}
+
+// Add module
+document.getElementById('addModuleBtn').addEventListener('click', async function() {
+    const moduleName = prompt('请输入新模块名称:');
+    if (!moduleName) return;
+    
+    try {
+        const response = await fetch('/api/modules', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: moduleName,
+                content: '',
+                type: 'custom',
+                visible: true
+            })
+        });
+        const data = await response.json();
+        if (data.success) {
+            showToast('模块已添加', 'success');
+            initializeLayoutEditor();
+        } else {
+            showToast(data.message || '添加失败', 'error');
+        }
+    } catch (error) {
+        showToast('添加失败', 'error');
+    }
+});
 
 // Save layout
 document.getElementById('saveLayoutBtn').addEventListener('click', async function() {
@@ -622,6 +681,7 @@ document.getElementById('themeForm').addEventListener('submit', async function(e
         themeData.background_color = document.getElementById('solidBackgroundColor').value;
     }
     
+    // 保存前台主题
     try {
         const response = await fetch('/api/theme', {
             method: 'POST',
@@ -633,6 +693,52 @@ document.getElementById('themeForm').addEventListener('submit', async function(e
         
         const data = await response.json();
         if (data.success) {
+            showToast('前台主题已保存', 'success');
+        } else {
+            showToast(data.message || '保存失败', 'error');
+        }
+    } catch (error) {
+        showToast('保存失败', 'error');
+    }
+    
+    // 保存后台主题
+    const adminThemeData = {
+        primary_color: document.getElementById('adminPrimaryColor').value,
+        sidebar_bg: document.getElementById('adminSidebarBg').value,
+        sidebar_text: document.getElementById('adminSidebarText').value,
+        content_bg: document.getElementById('adminContentBg').value,
+        card_bg: document.getElementById('adminCardBg').value
+    };
+    
+    try {
+        const response = await fetch('/api/admin-theme', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(adminThemeData)
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            showToast('后台主题已保存', 'success');
+            applyAdminTheme(adminThemeData);
+        } else {
+            showToast(data.message || '保存失败', 'error');
+        }
+    } catch (error) {
+        showToast('后台主题保存失败', 'error');
+    }
+});
+
+// 应用后台主题
+function applyAdminTheme(theme) {
+    document.documentElement.style.setProperty('--admin-primary', theme.primary_color);
+    document.documentElement.style.setProperty('--admin-sidebar-bg', theme.sidebar_bg);
+    document.documentElement.style.setProperty('--admin-sidebar-text', theme.sidebar_text);
+    document.documentElement.style.setProperty('--admin-content-bg', theme.content_bg);
+    document.documentElement.style.setProperty('--admin-card-bg', theme.card_bg);
+}
             showToast('主题已保存', 'success');
         } else {
             showToast('保存失败', 'error');

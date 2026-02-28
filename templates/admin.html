@@ -14,8 +14,6 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="#profile" class="nav-item active" data-section="profile">个人信息</a>
-                <a href="#skills" class="nav-item" data-section="skills">技能管理</a>
-                <a href="#projects" class="nav-item" data-section="projects">项目管理</a>
                 <a href="#files" class="nav-item" data-section="files">文件管理</a>
                 <a href="#theme" class="nav-item" data-section="theme">主题设置</a>
                 <a href="#layout" class="nav-item" data-section="layout">布局管理</a>
@@ -151,6 +149,28 @@
                         <button type="button" id="uploadCursorBtn" class="btn btn-secondary">上传鼠标文件</button>
                         <p class="help-text">支持格式：.cur, .png, .svg, .ico</p>
                     </div>
+                    <hr>
+                    <h3>后台界面设置</h3>
+                    <div class="form-group">
+                        <label for="adminPrimaryColor">主色调</label>
+                        <input type="color" id="adminPrimaryColor" name="primary_color" value="#6366f1">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminSidebarBg">侧边栏背景色</label>
+                        <input type="color" id="adminSidebarBg" name="sidebar_bg" value="#1f2937">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminSidebarText">侧边栏文字颜色</label>
+                        <input type="color" id="adminSidebarText" name="sidebar_text" value="#ffffff">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminContentBg">内容区背景色</label>
+                        <input type="color" id="adminContentBg" name="content_bg" value="#f9fafb">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminCardBg">卡片背景色</label>
+                        <input type="color" id="adminCardBg" name="card_bg" value="#ffffff">
+                    </div>
                     <button type="submit" class="btn btn-primary">保存主题</button>
                 </form>
             </section>
@@ -158,16 +178,29 @@
             <!-- Layout Section -->
             <section id="layout-section" class="content-section">
                 <h2>布局管理</h2>
-                <p class="section-description">拖拽模块来调整页面布局顺序</p>
-                <div id="layoutModules" class="layout-modules"></div>
-                <button id="saveLayoutBtn" class="btn btn-primary">保存布局</button>
-            </section>
+                <p class="section-description">管理页面模块的显示、添加和删除</p>
+                
+                <div class="layout-management">
+                    <div class="layout-header">
+                        <h3>模块列表</h3>
+                        <button id="addModuleBtn" class="btn btn-primary">添加模块</button>
+                    </div>
+                    <div id="layoutModules" class="layout-modules"></div>
+                </div>
 
-            <!-- Projects Section -->
-            <section id="projects-section" class="content-section">
-                <h2>项目管理</h2>
-                <button id="addProjectBtn" class="btn btn-primary">添加项目</button>
-                <div id="projectsList" class="projects-list"></div>
+                <div class="projects-skills-section">
+                    <h3>项目管理</h3>
+                    <button id="addProjectBtn" class="btn btn-secondary">添加项目</button>
+                    <div id="projectsList" class="projects-list"></div>
+                </div>
+
+                <div class="projects-skills-section">
+                    <h3>技能管理</h3>
+                    <button id="addSkillBtn" class="btn btn-secondary">添加技能</button>
+                    <div id="skillsList" class="skills-list"></div>
+                </div>
+
+                <button id="saveLayoutBtn" class="btn btn-primary">保存所有更改</button>
             </section>
 
             <!-- Stats Section -->
