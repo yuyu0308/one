@@ -152,7 +152,8 @@ function initializeLayoutEditor() {
             const moduleToDelete = this.getAttribute('data-module');
             if (confirm(`确定要删除模块"${moduleNames[moduleToDelete] || moduleToDelete}"吗？`)) {
                 await deleteModule(moduleToDelete);
-                moduleDiv.remove();
+                // 删除成功后重新加载模块列表
+                initializeLayoutEditor();
             }
         });
         

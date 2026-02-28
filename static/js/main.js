@@ -141,13 +141,15 @@ async function createModule(moduleName) {
 // Hero模块
 function createHeroModule() {
     const profile = pageData.profile || {};
+    const avatarUrl = profile.avatar && profile.avatar.trim() ? profile.avatar : '/static/uploads/default-avatar.png';
     return `
         <div class="hero">
             <div class="container">
                 <div class="hero-content">
-                    <img src="${profile.avatar || '/static/uploads/default-avatar.png'}" 
-                         alt="${profile.name}" 
+                    <img src="${avatarUrl}" 
+                         alt="${profile.name || '用户头像'}" 
                          class="avatar interactive-avatar"
+                         onerror="this.src='/static/uploads/default-avatar.png'; console.warn('头像加载失败，使用默认头像')"
                          data-full-size="${profile.avatar || 'https://placehold.co/160'}"
                          onerror="this.src='https://placehold.co/160'">
                     <h1 class="hero-title">${profile.name || '你的名字'}</h1>
@@ -185,13 +187,15 @@ function createHeroButtons() {
     const secondaryButtons = buttons.filter(b => b.style === 'secondary');
     
     let html = '';
-    
+
     // 主按钮组
     if (primaryButtons.length > 0 || secondaryButtons.length > 0) {
         html += '<div class="hero-links">';
         [...primaryButtons, ...secondaryButtons].forEach(btn => {
+            if (!btn || !btn.url) return; // 跳过无效按钮
             const icon = btn.icon ? `<span>${btn.icon}</span> ` : '';
-            html += `<a href="${btn.url}" class="btn ${btn.style === 'primary' ? 'btn-primary' : 'btn-secondary'}" ${btn.url.startsWith('http') ? 'target="_blank"' : ''}>${icon}${btn.text}</a>`;
+            const isExternal = btn.url && typeof btn.url === 'string' && btn.url.startsWith('http');
+            html += `<a href="${btn.url}" class="btn ${btn.style === 'primary' ? 'btn-primary' : 'btn-secondary'}" ${isExternal ? 'target="_blank"' : ''}>${icon}${btn.text}</a>`;
         });
         html += '</div>';
     }
