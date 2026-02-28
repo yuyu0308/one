@@ -197,6 +197,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Theme form submit
+    const themeForm = document.getElementById('themeForm');
+    if (themeForm) {
+        themeForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const backgroundType = document.getElementById('backgroundType');
+            const backgroundColor = document.getElementById('backgroundColor');
+            const backgroundColorEnd = document.getElementById('backgroundColorEnd');
+            const backgroundImage = document.getElementById('backgroundImage');
+            const solidBackgroundColor = document.getElementById('solidBackgroundColor');
+            const cursorStyle = document.getElementById('cursorStyle');
+            
+            const themeData = {
+                background_type: backgroundType ? backgroundType.value : 'gradient',
+                background_color: backgroundColor ? backgroundColor.value : '#667eea',
+                background_color_end: backgroundColorEnd ? backgroundColorEnd.value : '#764ba2',
+                background_image: backgroundImage ? backgroundImage.value : '',
+                solid_background_color: solidBackgroundColor ? solidBackgroundColor.value : '#667eea',
+                cursor_style: cursorStyle ? cursorStyle.value : 'default'
+            };
+            
+            try {
+                const response = await fetch('/api/theme', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(themeData)
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast('主题保存成功', 'success');
+                } else {
+                    showToast(data.message || '保存失败', 'error');
+                }
+            } catch (error) {
+                showToast('保存失败', 'error');
+            }
+        });
+    }
+    
     // Logout
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
