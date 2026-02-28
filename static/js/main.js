@@ -395,8 +395,6 @@ function initModuleDragAndDrop() {
     });
 }
 
-let draggedModule = null;
-
 function handleModuleDragStart(e) {
     draggedModule = this;
     this.classList.add('dragging');
@@ -484,63 +482,6 @@ function initDragAndDrop() {
 }
 
 let draggedModule = null;
-
-function handleDragStart(e) {
-    draggedModule = this;
-    this.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-}
-
-function handleDragEnd(e) {
-    this.classList.remove('dragging');
-    draggedModule = null;
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    
-    if (this !== draggedModule) {
-        this.classList.add('drag-over');
-    }
-}
-
-function handleDragLeave(e) {
-    this.classList.remove('drag-over');
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    this.classList.remove('drag-over');
-    
-    if (this !== draggedModule) {
-        const container = document.getElementById('modules-container');
-        const allModules = [...container.querySelectorAll('.module')];
-        const draggedIndex = allModules.indexOf(draggedModule);
-        const droppedIndex = allModules.indexOf(this);
-        
-        if (draggedIndex < droppedIndex) {
-            this.parentNode.insertBefore(draggedModule, this.nextSibling);
-        } else {
-            this.parentNode.insertBefore(draggedModule, this);
-        }
-        
-        // 更新模块顺序（保存到本地）
-        updateModuleOrder();
-    }
-}
-
-// 更新模块顺序
-function updateModuleOrder() {
-    const container = document.getElementById('modules-container');
-    const modules = container.querySelectorAll('.module');
-    const newOrder = [...modules].map(m => m.dataset.module);
-    
-    // 保存到localStorage
-    localStorage.setItem('moduleOrder', JSON.stringify(newOrder));
-    console.log('模块顺序已更新:', newOrder);
-    alert('模块顺序已更新（仅本地保存）');
-}
 
 // 平滑滚动到指定模块（带模糊动画）
 function scrollToModule(moduleName) {
