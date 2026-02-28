@@ -705,17 +705,23 @@ def update_module(module_id):
 def delete_module(module_id):
     """删除模块"""
     data = load_data()
-    
-    if 'modules' not in data or module_id not in data['modules']:
+
+    # 检查是否是自定义模块
+    is_custom_module = 'modules' in data and module_id in data['modules']
+
+    if is_custom_module:
+        # 从模块列表中删除自定义模块
+        del data['modules'][module_id]
+    elif module_id in ['hero', 'skills', 'projects', 'files']:
+        # 内置模块，只从显示顺序中移除
+        pass
+    else:
         return jsonify({'success': False, 'message': '模块未找到'}), 404
-    
-    # 从模块列表中删除
-    del data['modules'][module_id]
-    
+
     # 从模块顺序中删除
     if 'layout' in data and 'module_order' in data['layout']:
         data['layout']['module_order'] = [mid for mid in data['layout']['module_order'] if mid != module_id]
-    
+
     save_data(data)
     return jsonify({'success': True, 'message': '模块已删除'})
 
