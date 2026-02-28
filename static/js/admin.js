@@ -169,6 +169,34 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Background type change
+    const backgroundType = document.getElementById('backgroundType');
+    if (backgroundType) {
+        backgroundType.addEventListener('change', function() {
+            const gradientOptions = document.getElementById('gradientOptions');
+            const imageOptions = document.getElementById('imageOptions');
+            const solidOptions = document.getElementById('solidOptions');
+            
+            // Hide all options
+            if (gradientOptions) gradientOptions.style.display = 'none';
+            if (imageOptions) imageOptions.style.display = 'none';
+            if (solidOptions) solidOptions.style.display = 'none';
+            
+            // Show selected option
+            switch(this.value) {
+                case 'gradient':
+                    if (gradientOptions) gradientOptions.style.display = 'block';
+                    break;
+                case 'image':
+                    if (imageOptions) imageOptions.style.display = 'block';
+                    break;
+                case 'solid':
+                    if (solidOptions) solidOptions.style.display = 'block';
+                    break;
+            }
+        });
+    }
+    
     // Logout
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
