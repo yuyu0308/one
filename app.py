@@ -166,6 +166,27 @@ def get_data():
         del data['admin_password']
     return jsonify(data)
 
+@app.route('/api/data', methods=['POST'])
+@login_required
+def update_data():
+    """更新整个data对象（用于按钮管理等）"""
+    try:
+        new_data = request.json
+        
+        if not new_data:
+            return jsonify({'success': False, 'message': '没有数据'}), 400
+        
+        # 保留密码
+        old_data = load_data()
+        if 'admin_password' in old_data:
+            new_data['admin_password'] = old_data['admin_password']
+        
+        save_data(new_data)
+        return jsonify({'success': True, 'message': '数据已更新'})
+    except Exception as e:
+        print(f'更新data错误: {str(e)}')
+        return jsonify({'success': False, 'message': f'更新失败: {str(e)}'}), 500
+
 @app.route('/api/profile', methods=['POST'])
 @login_required
 def update_profile():
