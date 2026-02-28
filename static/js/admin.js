@@ -1071,3 +1071,35 @@ function showToast(message, type) {
 
 // Initialize
 loadData();
+
+// Navigation - 侧边栏导航切换
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // 移除所有active类
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.classList.remove('active');
+        });
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // 添加active类到当前点击的导航项
+        this.classList.add('active');
+        
+        // 显示对应的内容区域
+        const sectionName = this.getAttribute('data-section');
+        const targetSection = document.getElementById(`${sectionName}-section`);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+    });
+});
+
+// 退出登录
+document.getElementById('logoutBtn')?.addEventListener('click', function() {
+    if (confirm('确定要退出登录吗？')) {
+        window.location.href = '/logout';
+    }
+});
