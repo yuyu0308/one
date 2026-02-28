@@ -154,6 +154,11 @@ def index():
     data = load_data()
     return render_template('index.html', data=data)
 
+# 微信验证文件路由
+@app.route('/3d773b4521c4a89f973f6b7d851a9edc.txt')
+def wechat_verification():
+    return 'de8093f9865c3ab5f01066d0711d1aa93ebc886e', 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
 @app.route('/admin')
 def admin():
     if 'logged_in' not in session:
