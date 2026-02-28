@@ -905,68 +905,50 @@ document.getElementById('themeForm').addEventListener('submit', async function(e
     }
 });
 
-// 应用后台主题
-function applyAdminTheme(theme) {
-    document.documentElement.style.setProperty('--admin-primary', theme.primary_color);
-    document.documentElement.style.setProperty('--admin-sidebar-bg', theme.sidebar_bg);
-    document.documentElement.style.setProperty('--admin-sidebar-text', theme.sidebar_text);
-    document.documentElement.style.setProperty('--admin-content-bg', theme.content_bg);
-    document.documentElement.style.setProperty('--admin-card-bg', theme.card_bg);
-}
-
-// Background image upload
-document.getElementById('backgroundImageFile').addEventListener('change', async function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        try {
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const data = await response.json();
-            if (data.success) {
-                document.getElementById('backgroundImage').value = data.url;
-                showToast('背景图上传成功', 'success');
-            } else {
-                showToast('上传失败', 'error');
-            }
-        } catch (error) {
-            showToast('上传失败', 'error');
-        }
-    }
+// Admin theme form
+document.getElementById('adminBackgroundType')?.addEventListener('change', function() {
+    const bgType = this.value;
+    document.getElementById('adminGradientOptions').style.display = bgType === 'gradient' ? 'block' : 'none';
+    document.getElementById('adminImageOptions').style.display = bgType === 'image' ? 'block' : 'none';
+    document.getElementById('adminSolidOptions').style.display = bgType === 'solid' ? 'block' : 'none';
 });
 
-// Navigation
-document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', function(e) {
-        e.preventDefault();
-        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+document.getElementById('adminThemeForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const bgType = document.getElementById('adminBackgroundType').value;
+    let adminThemeData = {
+        background_type: bgType
+    };
+    
+    if (bgType === 'gradient') {
+        adminThemeData.background_color = document.getElementById('adminBackgroundColor').value;
+        adminThemeData.background_color_end = document.getElementById('adminBackgroundColorEnd').value;
+    } else if (bgType === 'image') {
+        adminThemeData.background_image = document.getElementById('adminBackgroundImage').value;
+    } else if (bgType === 'solid') {
+        adminThemeData.background_color = document.getElementById('adminSolidBackgroundColor').value;
+    }
+    
+    try {
+        const response = await fetch('/api/admin-theme', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(adminThemeData)
+        });
         
-        this.classList.add('active');
-        const sectionId = this.getAttribute('data-section') + '-section';
-        const sectionElement = document.getElementById(sectionId);
-        
-        if (sectionElement) {
-            sectionElement.classList.add('active');
+        const data = await response.json();
+        if (data.success) {
+            showToast('后台主题已保存', 'success');
+            applyAdminTheme(adminThemeData);
+        } else {
+            showToast(data.message || '保存失败', 'error');
         }
-        
-        // Load specific section data
-        const sectionName = this.getAttribute('data-section');
-        if (sectionName === 'files') {
-            loadFiles();
-        } else if (sectionName === 'theme') {
-            loadTheme();
-        } else if (sectionName === 'layout') {
-            loadLayout();
-        } else if (sectionName === 'stats') {
-            loadStats();
-        }
-    });
+    } catch (error) {
+        showToast('保存失败', 'error');
+    }
 });
 
 // Stats

@@ -162,7 +162,46 @@
                         <button type="button" id="uploadCursorBtn" class="btn btn-secondary">上传鼠标文件</button>
                         <p class="help-text">支持格式：.cur, .png, .svg, .ico</p>
                     </div>
-                    <hr>
+                    <button type="submit" class="btn btn-primary">保存主题</button>
+                </form>
+            </section>
+
+            <!-- Admin Theme Section -->
+            <section id="admin-theme-section" class="content-section">
+                <h2>后台界面主题</h2>
+                <form id="adminThemeForm">
+                    <div class="form-group">
+                        <label>背景类型</label>
+                        <select id="adminBackgroundType">
+                            <option value="gradient">渐变</option>
+                            <option value="image">图片</option>
+                            <option value="solid">纯色</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="adminGradientOptions">
+                        <label>渐变颜色</label>
+                        <div class="color-picker-group">
+                            <div>
+                                <label>起始颜色</label>
+                                <input type="color" id="adminBackgroundColor" value="#1f2937">
+                            </div>
+                            <div>
+                                <label>结束颜色</label>
+                                <input type="color" id="adminBackgroundColorEnd" value="#374151">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="adminImageOptions" style="display: none;">
+                        <label>背景图片URL</label>
+                        <input type="text" id="adminBackgroundImage" placeholder="输入图片URL">
+                    </div>
+                    <div class="form-group" id="adminSolidOptions" style="display: none;">
+                        <label>背景颜色</label>
+                        <input type="color" id="adminSolidBackgroundColor" value="#1f2937">
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存后台主题</button>
+                </form>
+            </section>
                     <h3>后台界面设置</h3>
                     <div class="form-group">
                         <label for="adminPrimaryColor">主色调</label>

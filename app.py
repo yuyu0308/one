@@ -547,13 +547,17 @@ def update_layout():
 def get_admin_theme():
     """获取后台界面主题配置"""
     data = load_data()
-    return jsonify(data.get('admin_theme', {
+    admin_theme = data.get('admin_theme', {
         'primary_color': '#6366f1',
         'sidebar_bg': '#1f2937',
         'sidebar_text': '#ffffff',
         'content_bg': '#f9fafb',
-        'card_bg': '#ffffff'
-    }))
+        'card_bg': '#ffffff',
+        'background_type': 'gradient',
+        'background_color': '#1f2937',
+        'background_color_end': '#374151'
+    })
+    return jsonify(admin_theme)
 
 @app.route('/api/admin-theme', methods=['POST'])
 @login_required

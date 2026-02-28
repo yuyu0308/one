@@ -31,6 +31,9 @@ async function initPage() {
         
         // 添加页面加载动画
         initAnimations();
+        
+        // 初始化模块拖动编辑
+        initModuleDragAndDrop();
     } catch (error) {
         console.error('初始化页面失败:', error);
         if (loading) {
@@ -373,6 +376,94 @@ function formatFileSize(bytes) {
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
     if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
     return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+}
+
+// 模块拖动编辑
+function initModuleDragAndDrop() {
+    const container = document.getElementById('modules-container');
+    const modules = container.querySelectorAll('.module');
+    
+    modules.forEach(module => {
+        module.classList.add('draggable');
+        module.setAttribute('draggable', 'true');
+        
+        module.addEventListener('dragstart', handleModuleDragStart);
+        module.addEventListener('dragend', handleModuleDragEnd);
+        module.addEventListener('dragover', handleModuleDragOver);
+        module.addEventListener('drop', handleModuleDrop);
+        module.addEventListener('dragleave', handleModuleDragLeave);
+    });
+}
+
+let draggedModule = null;
+
+function handleModuleDragStart(e) {
+    draggedModule = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleModuleDragEnd(e) {
+    this.classList.remove('dragging');
+    draggedModule = null;
+    saveModuleOrder();
+}
+
+function handleModuleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    
+    if (this !== draggedModule) {
+        this.classList.add('drag-over');
+    }
+}
+
+function handleModuleDragLeave(e) {
+    this.classList.remove('drag-over');
+}
+
+function handleModuleDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    
+    if (this !== draggedModule) {
+        const container = document.getElementById('modules-container');
+        const allModules = [...container.querySelectorAll('.module')];
+        const draggedIndex = allModules.indexOf(draggedModule);
+        const droppedIndex = allModules.indexOf(this);
+        
+        if (draggedIndex < droppedIndex) {
+            this.parentNode.insertBefore(draggedModule, this.nextSibling);
+        } else {
+            this.parentNode.insertBefore(draggedModule, this);
+        }
+    }
+}
+
+// 保存模块顺序
+async function saveModuleOrder() {
+    const container = document.getElementById('modules-container');
+    const modules = container.querySelectorAll('.module');
+    const newOrder = [...modules].map(m => m.dataset.module);
+    
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        if (data.layout) {
+            data.layout.module_order = newOrder;
+            
+            await fetch('/api/data', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            
+            console.log('模块顺序已保存:', newOrder);
+        }
+    } catch (error) {
+        console.error('保存模块顺序失败:', error);
+    }
 }
 
 // 初始化拖拽功能
